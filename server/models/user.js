@@ -18,7 +18,6 @@ var userSchema = new mongoose.Schema({
     },
     mobile: {
         type: String,
-        required: true,
         unique: true,
     },
     password: {
@@ -64,13 +63,13 @@ var userSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-//trong model cuar mongodb thi khong the dung arrow function 
-// vi this khong the su dung trong arrow function
+//trong model cua mongodb thi khong the dung arrow function 
+//vi this khong the su dung trong arrow function
 //nhung api nao khong phai update ma luu lai gia tri nhu create, save 
 // thi se chay vao trong doan code nay
 userSchema.pre('save', async function (next) {
-    //neu password da hash roi thi khong hash no nua
-    //neu password khong thay doi thi se goi ham next() =>dong vai tro nhu return
+    //neu password da hash roi thi khong hash nua
+    //neu password khong thay doi thi se goi ham next() => dong vai tro nhu return
     //no se chay ham tiep theo ma khong thuc hien doan code ben duoi
     if (!this.isModified('password')) {
         next();
@@ -78,5 +77,11 @@ userSchema.pre('save', async function (next) {
     const salt = bcrypt.genSaltSync(10);
     this.password = await bcrypt.hash(this.password, salt);
 })
+
+userSchema.methods = {
+    isCorrectPassword: async function (password) {
+        return await bcrypt.compare(password, this.password);
+    }
+}
 //Export the model
 module.exports = mongoose.model('User', userSchema);
