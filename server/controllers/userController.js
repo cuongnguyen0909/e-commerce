@@ -4,6 +4,7 @@ const { generateAccessToken, generateRefreshToken } = require('../middlewares/jw
 const jwt = require('jsonwebtoken');
 const sendMail = require('../ultils/sendMail');
 const crypto = require('crypto');
+const user = require('../models/user');
 //api register
 //asyncHandler co cong dung hung nhung cai error va next toi thang tiep theo
 const registerUser = asyncHandler(async (req, res) => {
@@ -41,16 +42,16 @@ const login = asyncHandler(async (req, res) => {
     if (user && await user.isCorrectPassword(password)) {
         // console.log(user.isCorrectPassword(password));
         //su dung destructoring de remove passord va role khoi nguoi dung
-        const { password, role, ...userData } = user.toObject();
+        const { password, role, refreshToken, ...userData } = user.toObject();
         //tao accessToken va refeshToken
         const accessToken = generateAccessToken(user._id, role);
-        const refreshToken = generateRefreshToken(user._id);
+        const newRefreshToken = generateRefreshToken(user._id);
         //lu refresh token vao database
         await User.findByIdAndUpdate(user._id,
-            { refreshToken },
+            { newRefreshToken },
             { new: true });
         //luu refrehToken vao cookie
-        res.cookie('refreshToken', refreshToken, {
+        res.cookie('refreshToken', newRefreshToken, {
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
@@ -64,6 +65,7 @@ const login = asyncHandler(async (req, res) => {
     }
 })
 
+//GET A USER
 const getCurrentUser = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     const user = await User.findOne({ _id }).select('-refreshToken -password -role');
@@ -73,6 +75,54 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     })
 })
 
+//DELETE A USER
+const deleteUser = asyncHandler(async (req, res) => {
+    const { _id } = req.query; //
+    if (!_id) throw new Error('Missing Input');
+    const response = await User.findByIdAndDelete({ _id });//ham nay no van tra ve data user da xoa
+    return res.status(200).json({
+        success: response ? true : false,
+        deletedUser: response ? `User with email: ${response.email} deleted` : 'No user delete'
+    })
+})
+//UPDATE USER
+const updateUser = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    // khong cho nguoi dung tu sua role
+    const { password, role, refreshToken, ...userData } = req.body;
+    if (!_id || Object.keys(userData).length === 0) throw new Error('Missing Input');
+    const response = await User.findByIdAndUpdate(
+        _id,
+        userData,
+        { new: true }
+    ).select('-refreshToken -password -role');//ham nay no van tra ve data user da xoa
+    return res.status(200).json({
+        success: response ? true : false,
+        updatedUser: response ? response : 'Can not update user!'
+    })
+})
+//UPDATE USER BY ADMIN
+const updateUserByAdmin = asyncHandler(async (req, res) => {
+    const { uid } = req.params;// 'api/user/:uid' <=> 'api/user/:123456789'
+    if (Object.keys(req.body).length === 0) throw new Error('Missing Input');
+    const response = await User.findByIdAndUpdate(
+        uid,
+        req.body,
+        { new: true }
+    ).select('-refreshToken -password -role');//ham nay no van tra ve data user da xoa
+    return res.status(200).json({
+        success: response ? true : false,
+        updatedUser: response ? response : 'Can not update user!'
+    })
+})
+//GET ALL USER
+const getAllUser = asyncHandler(async (req, res) => {
+    const users = await User.find().select('-refreshToken -password -role');;
+    return res.status(200).json({
+        success: users ? true : false,
+        users
+    })
+})
 const refreshAccessToken = asyncHandler(async (req, res) => {
     //lay token tu cookie
     const cookie = req.cookies;
@@ -173,10 +223,14 @@ module.exports = {
     registerUser,
     login,
     getCurrentUser,
+    getAllUser,
     refreshAccessToken,
     logout,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    deleteUser,
+    updateUser,
+    updateUserByAdmin
 }
 
 
