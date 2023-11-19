@@ -4,7 +4,7 @@ const { generateAccessToken, generateRefreshToken } = require('../middlewares/jw
 const jwt = require('jsonwebtoken');
 const sendMail = require('../ultils/sendMail');
 const crypto = require('crypto');
-const user = require('../models/user');
+// const user = require('../models/user');
 //api register
 //asyncHandler co cong dung hung nhung cai error va next toi thang tiep theo
 const registerUser = asyncHandler(async (req, res) => {
