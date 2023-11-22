@@ -21,7 +21,7 @@ const registerUser = asyncHandler(async (req, res) => {
         const newUser = await User.create(req.body);
         return res.status(200).json({
             success: newUser ? true : false,
-            message: newUser ? `Create ${newUser.email} successfully. Please login` : 'Something went wrong. Please check again.'
+            newUser: newUser ? `Create ${newUser.email} successfully. Please login` : 'Something went wrong. Please check again.'
         })
     }
 })
@@ -71,7 +71,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ _id }).select('-refreshToken -password -role');
     return res.status(200).json({
         success: user ? true : false,
-        result: user ? user : 'User not found'
+        user: user ? user : 'User not found'
     })
 })
 
@@ -132,6 +132,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 
     const result = await jwt.verify(cookie.refreshToken, process.env.JWT_SECRET);
+    console.log(result);
     const user = await User.findOne({ _id: result._id, refreshToken: cookie.refreshToken });
     return res.status(200).json({
         success: user ? true : false,

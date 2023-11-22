@@ -4,14 +4,13 @@ const { verifyAccessToken } = require('../middlewares/verifyToken');
 const isAdmin = require('../middlewares/isAdmin');
 
 router.post('/', [verifyAccessToken, isAdmin], productController.createProduct);
-router.get('/', productController.getAllProduct);
+router.get('/', productController.getProducts);
+router.put('/ratings', verifyAccessToken, productController.ratingProduct);
+
+
 router.put('/:pid', [verifyAccessToken, isAdmin], productController.updateProduct);
 router.delete('/:pid', [verifyAccessToken, isAdmin], productController.deleteProduct);
-
-
 router.get('/:pid', productController.getOneProduct);
-
-
 
 
 module.exports = router;

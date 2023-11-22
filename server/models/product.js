@@ -27,7 +27,7 @@ var productSchema = new mongoose.Schema({
     },
     category: {
         type: mongoose.Types.ObjectId,
-        ref: 'Category',
+        ref: 'ProdcutCategory',
     },
     quantity: {
         type: Number,
@@ -44,7 +44,7 @@ var productSchema = new mongoose.Schema({
         type: String,
         enum: ['Black', 'Grown', 'Red']
     },
-    rating: [
+    ratings: [
         {
             star: { type: Number },
             postedBy: { type: mongoose.Types.ObjectId, ref: 'User' },
