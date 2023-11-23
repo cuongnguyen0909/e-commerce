@@ -3,6 +3,12 @@ const asyncHandler = require('express-async-handler');
 
 //CREATE PRODUCT CATEGORY
 const createProductCategory = asyncHandler(async (req, res) => {
+    if (Object.keys(req.body).length === 0) {
+        throw new Error('Missing Input');
+    }
+    if (Object.keys(req.body).length === 0) {
+        throw new Error('Missing Input');
+    }
     const newProductCategory = await ProductCategory.create(req.body);
     return res.json({
         success: newProductCategory ? true : false,

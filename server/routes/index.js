@@ -2,6 +2,8 @@ const userRouter = require('./userRoute');
 const productRouter = require('./productRoute');
 const productCategoryRouter = require('./productCategoryRoute');
 const blogCategoryRouter = require('./blogCategoryRoute');
+const blogRouter = require('./blogRoute');
+const brandRouter = require('./brandRoute');
 
 const { notFound, errorHandler } = require('../middlewares/errorHandler');
 const router = require('./productRoute');
@@ -11,10 +13,11 @@ const initRoutes = (app) => {
     //neu tat ca cac api khong khop thi no se chay xuong thang notFound => tra ve loi 404
     //con trong qua trinh chay api co loi thi se chay xuong thang errorHandler
     app.use('/api/v1/user', userRouter);
-    app.use('/api/v1/product', productRouter)
-    app.use('/api/v1/productcategory', productCategoryRouter)
-    app.use('/api/v1/blogcategory', blogCategoryRouter)
-
+    app.use('/api/v1/product', productRouter);
+    app.use('/api/v1/productcategory', productCategoryRouter);
+    app.use('/api/v1/blog', blogRouter);
+    app.use('/api/v1/blogcategory', blogCategoryRouter);
+    app.use('/api/v1/brand', brandRouter);
 
 
     app.use(notFound);

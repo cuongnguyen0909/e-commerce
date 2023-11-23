@@ -7,6 +7,7 @@ const createProduct = asyncHandler(async (req, res) => {
     if (Object.keys(req.body).length === 0) {
         throw new Error('Missing Input');
     }
+    
     if (req.body && req.body.title) {
         req.body.slug = slugify(req.body.title);
     }
