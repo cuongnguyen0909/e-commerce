@@ -126,10 +126,20 @@ const getOneBlog = asyncHandler(async (req, res) => {
     const blog = await Blog.findByIdAndUpdate(bid, { $inc: { numberViews: 1 } }, { new: true })
         .populate('likes', 'firstName lastName')
         .populate('disLikes', 'firstName lastName')
+    console.log(blog);
     // console.log(blog?.likes?.forEach(item => console.log(item._id)));
     return res.json({
         success: blog ? true : false,
         blog: blog ? blog : 'Can not get blog'
+    })
+})
+const uploadImageBlog = asyncHandler(async (req, res) => {
+    const { bid } = req.params;
+    if (!req.file) throw new Error('Missing Input');
+    const response = await Blog.findByIdAndUpdate(bid, { image: req.file.path }, { new: true })
+    return res.json({
+        success: response ? true : false,
+        updatedBlog: response ? response : 'Can not upload images blog'
     })
 })
 module.exports = {
@@ -139,5 +149,6 @@ module.exports = {
     deleteBlog,
     likeBlog,
     disLikeBlog,
-    getOneBlog
+    getOneBlog,
+    uploadImageBlog
 }
