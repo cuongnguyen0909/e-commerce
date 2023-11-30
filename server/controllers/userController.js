@@ -117,7 +117,7 @@ const updateUserByAdmin = asyncHandler(async (req, res) => {
 })
 //GET ALL USER
 const getAllUser = asyncHandler(async (req, res) => {
-    const users = await User.find().select('-refreshToken -password -role');;
+    const users = await User.find().select('-refreshToken -password -role');
     return res.status(200).json({
         success: users ? true : false,
         users
@@ -220,6 +220,63 @@ const resetPassword = asyncHandler(async (req, res) => {
         message: user ? 'Updated password successfully' : "Something went wrong!"
     })
 });
+const updateAddress = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    if (!req.body.address) throw new Error('Missing input');
+    const response = await User.findByIdAndUpdate(
+        _id,
+        {
+            $push: { address: req.body.address }
+        },
+        { new: true }
+    ).select('-refreshToken -password -role');
+    return res.json({
+        success: response ? true : false,
+        updatedUser: response ? response : 'Can not update new address'
+    });
+})
+const updateCart = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    const { pid, quantity, color } = req.body;
+    if (!pid || !quantity || !color) throw new Error('Missing input');
+    const userCart = await User.findById(_id).select('cart');
+    const alreadyProduct = userCart?.cart?.find(item => item.product.toString() === pid);
+    if (alreadyProduct) {
+        if (alreadyProduct.color === color) {
+            const response = await User.updateOne({
+                cart: { $elemMatch: alreadyProduct }
+            }, {
+                $set: { 'cart.$.quantity': quantity }
+            }, {
+                new: true
+            })
+            return res.json({
+                success: response ? true : false,
+                updatedUser: response ? response : 'Can not update cart'
+            })
+        } else {
+            const response = await User.findByIdAndUpdate(_id, {
+                $push: { cart: { product: pid, quantity, color } }
+            }, { new: true })
+            return res.json({
+                success: response ? true : false,
+                updatedUser: response ? response : 'Can not update cart'
+            })
+        }
+    } else {
+        const response = await User.findByIdAndUpdate(_id, {
+            $push: { cart: { product: pid, quantity, color } }
+        }, { new: true })
+        return res.json({
+            success: response ? true : false,
+            updatedUser: response ? response : 'Can not update cart'
+        })
+    }
+    return res.json({
+        success: response ? true : false,
+        updatedUser: response ? response : 'Can not update new address'
+    })
+})
 module.exports = {
     registerUser,
     login,
@@ -231,7 +288,9 @@ module.exports = {
     resetPassword,
     deleteUser,
     updateUser,
-    updateUserByAdmin
+    updateUserByAdmin,
+    updateAddress,
+    updateCart
 }
 
 

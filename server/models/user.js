@@ -29,17 +29,16 @@ var userSchema = new mongoose.Schema({
         type: String,
         default: 'user',
     },
-    cart: {
-        type: Array,
-        default: [],
-    },
+    cart: [{
+        product: { type: mongoose.Types.ObjectId, ref: 'Product' },
+        quantity: Number,
+        color: String,
+    }],
     //khoa phu den ban Address
-    address: [
-        {
-            type: mongoose.Types.ObjectId,
-            ref: 'Address',
-        }
-    ],
+    address: {
+        type: Array,
+        default: []
+    },
     //khoa phu den bang Product
     wishlist: [{
         type: mongoose.Types.ObjectId,
