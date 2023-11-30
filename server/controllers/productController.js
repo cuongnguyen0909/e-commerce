@@ -1,13 +1,14 @@
 const Product = require('../models/product')
 const asyncHandler = require('express-async-handler');
 const slugify = require('slugify');
+const data = require('../../data/data.json');
 
 //CREATE PRODUCT
 const createProduct = asyncHandler(async (req, res) => {
     if (Object.keys(req.body).length === 0) {
         throw new Error('Missing Input');
     }
-    
+
     if (req.body && req.body.title) {
         req.body.slug = slugify(req.body.title);
     }
@@ -22,10 +23,12 @@ const createProduct = asyncHandler(async (req, res) => {
 //GET ONE PRODUCT
 const getOneProduct = asyncHandler(async (req, res) => {
     const { pid } = req.params; //api/product/:pid
-    const product = await Product.findById(pid);
+    const product = await Product.findById(pid).populate('ratings.postedBy', 'firstName lastName');
+    console.log(product?.ratings?.postedBy);
     return res.status(200).json({
         success: product ? true : false,
-        product: product ? product : 'Can not get product'
+        product: product ? product : 'Can not get product',
+        rs: product?.ratings?.postedBy
     })
 })
 
@@ -83,6 +86,7 @@ const getProducts = asyncHandler(async (req, res) => {
     const skip = (page - 1) * limit;
     queryCommand.skip(skip).limit(limit);
     const response = await queryCommand.exec();
+    console.log(response);
     // Đếm số lượng tài liệu thỏa mãn truy vấn
     const total = await Product.countDocuments(formattedQuery);
     // Trả về kết quả của API
@@ -159,13 +163,54 @@ const ratingProduct = asyncHandler(async (req, res) => {
     })
 })
 
+//UPLOAD IMAGE PRODUCT
+const uploadImageProduct = asyncHandler(async (req, res) => {
+    const { pid } = req.params;
+    if (!req.files) throw new Error('Missing Input');
+    const response = await Product.findByIdAndUpdate(pid, {
+        //push cac phan tu vao images dung $each cua mongoose
+        $push: { images: { $each: req.files.map(item => item.path) } }
+    }, { new: true })
+    return res.json({
+        success: response ? true : false,
+        updatedProduct: response ? response : 'Can not upload images product'
+    })
+})
 
-
+//FUNCTION INSERT DATA
+const ultils = async (product) => {
+    await Product.create({
+        title: product?.name,
+        slug: slugify(product?.name) + Math.round(Math.random() * 1000) + '',
+        description: product?.description,
+        brand: product?.brand,
+        price: Math.round(Number(product?.price?.match(/\d/g).join('')) / 100),
+        category: product?.category[1],
+        quantity: Math.round(Math.random() * 1000),
+        sold: Math.round(Math.random() * 100),
+        images: product?.images,
+        color: product?.variants?.find(item => item.label === 'Color')?.variants[0]
+    })
+}
+//INSERT DATA TO DATABASE
+const insertData = asyncHandler(async (req, res) => {
+    const promises = []
+    console.log(typeof (data));
+    for (let product of data) {
+        promises.push(ultils(product));
+    }
+    await Promise.all(promises)
+    return res.json({
+        success: true
+    })
+})
 module.exports = {
     createProduct,
     getOneProduct,
     getProducts,
     updateProduct,
     deleteProduct,
-    ratingProduct
+    ratingProduct,
+    uploadImageProduct,
+    insertData
 }
