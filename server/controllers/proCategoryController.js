@@ -1,6 +1,6 @@
 const ProductCategory = require('../models/produtCategory')
 const asyncHandler = require('express-async-handler');
-
+const data = require('../../data/cate_brand.json')
 //CREATE PRODUCT CATEGORY
 const createProductCategory = asyncHandler(async (req, res) => {
     if (Object.keys(req.body).length === 0) {
@@ -41,9 +41,29 @@ const deleteProductCategory = asyncHandler(async (req, res) => {
         deletedProCategory: deletedProCategory ? deletedProCategory : 'Can not delete product categories'
     })
 })
+//FUNCTION INSERT DATA
+const ultils = async (cate) => {
+    await ProductCategory.create({
+        title: cate?.cate,
+        brand: cate?.brand
+    })
+}
+//INSERT DATA TO DATABASE
+const insertData = asyncHandler(async (req, res) => {
+    const promises = [];
+    console.log(typeof (data));
+    for (let cate of data) {
+        promises.push(ultils(cate));
+    }
+    await Promise.all(promises)
+    return res.json({
+        success: true
+    })
+})
 module.exports = {
     createProductCategory,
     getProductCategories,
     updateProductCategory,
-    deleteProductCategory
+    deleteProductCategory,
+    insertData
 }
