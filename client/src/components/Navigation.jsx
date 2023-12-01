@@ -1,9 +1,23 @@
-import React from 'react'
-
+import React from 'react';
+import { navigation } from '../ultils/constants';
+import { NavLink } from 'react-router-dom';
+const notActiveStyle = '';
 const Navigation = () => {
     return (
-        <div className='w-main h-[48px] py-2 border'>Navigation</div>
-    )
-}
+        <div className="w-main h-[48px] py-2 border-y mb-6 text-sm flex items-center">
+            {navigation.map((item) => (
+                <NavLink
+                    key={item.id}
+                    to={item.path}
+                    className={({ isActive }) =>
+                        isActive ? 'pr-12 hover:text-main text-main' : 'pr-12 hover:text-main'
+                    }
+                >
+                    {item.value}
+                </NavLink>
+            ))}
+        </div>
+    );
+};
 
-export default Navigation
+export default Navigation;
