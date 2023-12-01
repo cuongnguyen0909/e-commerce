@@ -11,12 +11,12 @@ const dbConnect = async () => {
         if (connection.connection.readyState === 1) {
             console.log('Database connection sucessfully');
         } else {
-            console.log("Connecting to DB");
+            console.log('Connecting to DB');
         }
     } catch (err) {
         console.log('Database connection FAIL');
         throw new Error(err);
     }
-}
+};
 
 module.exports = dbConnect;

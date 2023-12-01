@@ -1,4 +1,4 @@
-const Product = require('../models/product')
+const Product = require('../models/product');
 const asyncHandler = require('express-async-handler');
 const slugify = require('slugify');
 const data = require('../../data/data.json');
@@ -16,9 +16,9 @@ const createProduct = asyncHandler(async (req, res) => {
     const newProduct = await Product.create(req.body);
     return res.status(200).json({
         success: newProduct ? true : false,
-        createdProduct: newProduct ? newProduct : 'Can not create new product'
-    })
-})
+        createdProduct: newProduct ? newProduct : 'Can not create new product',
+    });
+});
 
 //GET ONE PRODUCT
 const getOneProduct = asyncHandler(async (req, res) => {
@@ -28,9 +28,9 @@ const getOneProduct = asyncHandler(async (req, res) => {
     return res.status(200).json({
         success: product ? true : false,
         product: product ? product : 'Can not get product',
-        rs: product?.ratings?.postedBy
-    })
-})
+        rs: product?.ratings?.postedBy,
+    });
+});
 
 //filtering, sorting & pagination
 //https://jeffdevslife.com/p/1-mongodb-query-of-advanced-filtering-sorting-limit-field-and-pagination-with-mongoose/
@@ -46,21 +46,22 @@ const getProducts = asyncHandler(async (req, res) => {
     và an toàn được sử dụng trong truy vấn. */
     const excludedFields = ['limit', 'sort', 'page', 'fields'];
     // Loại bỏ các trường đặc biệt khỏi truy vấn
-    excludedFields.forEach(item => {
+    excludedFields.forEach((item) => {
         delete query[item];
         // console.log(query);
     });
     //object->json->object hop le(thay the nhung cai toan tu nhu gte|gt thanh $gte|$gt)
     // Định dạng các toán tử để phù hợp với cú pháp của Mongoose
-    let queryString = JSON.stringify(query);//object -> json
-    console.log(queryString, typeof (queryString));
-    queryString = queryString.replace(/\b(gte|gt|lt|lte)\b/g, matchedElement => `$${matchedElement}`);
+    let queryString = JSON.stringify(query); //object -> json
+    // console.log(queryString, typeof queryString);
+    queryString = queryString.replace(/\b(gte|gt|lt|lte)\b/g, (matchedElement) => `$${matchedElement}`);
     // Chuyển đổi truy vấn đã định dạng thành đối tượng JSON
-    const formattedQuery = JSON.parse(queryString);//json->object
+    const formattedQuery = JSON.parse(queryString); //json->object
     // console.log(formattedQuery, typeof (formattedQuery));
+
     // Filtering
     if (query?.title) {
-        formattedQuery.title = { $regex: query.title, $options: 'i' }
+        formattedQuery.title = { $regex: query.title, $options: 'i' };
     }
     // Tạo một lệnh truy vấn mà không thực hiện nó ngay lập tức
     let queryCommand = Product.find(formattedQuery);
@@ -82,11 +83,11 @@ const getProducts = asyncHandler(async (req, res) => {
     //pagination
     // page=2&limit=10, 1-10 page 1, 11-20 page 2, 21-30 page 3
     const page = +req.query.page || 1;
-    const limit = +req.query.limit || 2;
+    const limit = +req.query.limit || 10;
     const skip = (page - 1) * limit;
     queryCommand.skip(skip).limit(limit);
     const response = await queryCommand.exec();
-    console.log(response);
+    // console.log(response);
     // Đếm số lượng tài liệu thỏa mãn truy vấn
     const total = await Product.countDocuments(formattedQuery);
     // Trả về kết quả của API
@@ -94,7 +95,7 @@ const getProducts = asyncHandler(async (req, res) => {
         success: response ? true : false,
         total,
         results: response.length,
-        products: response ? response : 'Can not get products'
+        products: response ? response : 'Can not get products',
     });
 });
 
@@ -104,12 +105,14 @@ const updateProduct = asyncHandler(async (req, res) => {
     if (req.body && req.body.title) {
         req.body.slug = slugify(req.body.title);
     }
-    const updatedProduct = await Product.findByIdAndUpdate(pid, req.body, { new: true });
+    const updatedProduct = await Product.findByIdAndUpdate(pid, req.body, {
+        new: true,
+    });
     return res.status(200).json({
         success: updatedProduct ? true : false,
-        updatedProduct: updatedProduct ? updatedProduct : 'Can not update product'
-    })
-})
+        updatedProduct: updatedProduct ? updatedProduct : 'Can not update product',
+    });
+});
 
 //DELETE PRODUCT
 const deleteProduct = asyncHandler(async (req, res) => {
@@ -118,9 +121,9 @@ const deleteProduct = asyncHandler(async (req, res) => {
     const deletedProduct = await Product.findByIdAndDelete(pid);
     return res.status(200).json({
         success: deletedProduct ? true : false,
-        deletedProduct: deletedProduct ? deletedProduct : 'Can not delete product'
-    })
-})
+        deletedProduct: deletedProduct ? deletedProduct : 'Can not delete product',
+    });
+});
 
 //RATINGs PRODUCT
 const ratingProduct = asyncHandler(async (req, res) => {
@@ -131,22 +134,18 @@ const ratingProduct = asyncHandler(async (req, res) => {
         throw new Error('Missing input');
     }
     const ratingProduct = await Product.findById(pid);
-    const alreadyRating = ratingProduct?.ratings?.find(item => item.postedBy.toString() === _id);
+    const alreadyRating = ratingProduct?.ratings?.find((item) => item.postedBy.toString() === _id);
     // console.log({ alreadyRating });
     if (alreadyRating) {
         //update lai star va comment
         await Product.updateOne(
             { ratings: { $elemMatch: alreadyRating } },
-            { $set: { "ratings.$.star": star, "ratings.$.comment": comment } },
-            { new: true }
-        )
+            { $set: { 'ratings.$.star': star, 'ratings.$.comment': comment } },
+            { new: true },
+        );
     } else {
         //add new start and comment
-        await Product.findByIdAndUpdate(
-            pid,
-            { $push: { ratings: { star, comment, postedBy: _id } } },
-            { new: true }
-        )
+        await Product.findByIdAndUpdate(pid, { $push: { ratings: { star, comment, postedBy: _id } } }, { new: true });
         // console.log({ response });
     }
     //sum ratings
@@ -154,28 +153,32 @@ const ratingProduct = asyncHandler(async (req, res) => {
     const ratingCount = updatedProduct.ratings.length;
     const sumRatings = updatedProduct.ratings.reduce((sum, item) => {
         return sum + +item.star;
-    }, 0)
+    }, 0);
     updatedProduct.totalRatings = (sumRatings / ratingCount).toFixed(1);
     await updatedProduct.save();
     return res.status(200).json({
         success: true,
-        updatedProduct
-    })
-})
+        updatedProduct,
+    });
+});
 
 //UPLOAD IMAGE PRODUCT
 const uploadImageProduct = asyncHandler(async (req, res) => {
     const { pid } = req.params;
     if (!req.files) throw new Error('Missing Input');
-    const response = await Product.findByIdAndUpdate(pid, {
-        //push cac phan tu vao images dung $each cua mongoose
-        $push: { images: { $each: req.files.map(item => item.path) } }
-    }, { new: true })
+    const response = await Product.findByIdAndUpdate(
+        pid,
+        {
+            //push cac phan tu vao images dung $each cua mongoose
+            $push: { images: { $each: req.files.map((item) => item.path) } },
+        },
+        { new: true },
+    );
     return res.json({
         success: response ? true : false,
-        updatedProduct: response ? response : 'Can not upload images product'
-    })
-})
+        updatedProduct: response ? response : 'Can not upload images product',
+    });
+});
 
 //FUNCTION INSERT DATA
 const ultils = async (product) => {
@@ -189,21 +192,22 @@ const ultils = async (product) => {
         quantity: Math.round(Math.random() * 1000),
         sold: Math.round(Math.random() * 100),
         images: product?.images,
-        color: product?.variants?.find(item => item.label === 'Color')?.variants[0]
-    })
-}
+        color: product?.variants?.find((item) => item.label === 'Color')?.variants[0],
+        thumb: product?.thumb,
+    });
+};
 //INSERT DATA TO DATABASE
 const insertData = asyncHandler(async (req, res) => {
-    const promises = []
-    console.log(typeof (data));
+    const promises = [];
+    console.log(typeof data);
     for (let product of data) {
         promises.push(ultils(product));
     }
-    await Promise.all(promises)
+    await Promise.all(promises);
     return res.json({
-        success: true
-    })
-})
+        success: true,
+    });
+});
 module.exports = {
     createProduct,
     getOneProduct,
@@ -212,5 +216,5 @@ module.exports = {
     deleteProduct,
     ratingProduct,
     uploadImageProduct,
-    insertData
-}
+    insertData,
+};

@@ -7,8 +7,8 @@ const sendMail = asyncHandler(async ({ email, html }) => {
         secure: false,
         auth: {
             user: process.env.EMAIL_NAME,
-            pass: process.env.EMAIL_APP_PASSWORD
-        }
+            pass: process.env.EMAIL_APP_PASSWORD,
+        },
     });
 
     let info = await transporter.sendMail({
@@ -19,6 +19,6 @@ const sendMail = asyncHandler(async ({ email, html }) => {
     });
 
     return info;
-})
+});
 
 module.exports = sendMail;
