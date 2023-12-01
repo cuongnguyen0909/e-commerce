@@ -1,20 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Login, Home, Public } from './pages/public';
 import path from './ultils/path';
-
-
+import { getCategories } from './store/asyncAction';
+import { useDispatch } from 'react-redux';
 function App() {
-  return (
-    <div className="min-h-screen font-main">
-      <Routes>
-        <Route path={path.PUBLIC} element={<Public />} >
-          <Route path={path.HOME} element={<Home />} />
-          <Route path={path.LOGIN} element={<Login />} />
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getCategories());
+    }, []);
 
-        </Route>
-      </Routes>
-    </div>
-  );
+    return (
+        <div className="min-h-screen font-main">
+            <Routes>
+                <Route path={path.PUBLIC} element={<Public />}>
+                    <Route path={path.HOME} element={<Home />} />
+                    <Route path={path.LOGIN} element={<Login />} />
+                </Route>
+            </Routes>
+        </div>
+    );
 }
 export default App;
