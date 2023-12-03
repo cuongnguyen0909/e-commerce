@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "axios": "^1.6.2",
+    "react-icon": "^1.0.0",
+    "react-icons": "^4.12.0"
+  }
+}

@@ -12,16 +12,16 @@ const registerUser = asyncHandler(async (req, res) => {
     if (!email || !password || !firstName || !lastName) {
         return res.status(400).json({
             sucess: false,
-            message: 'Email/ Password/ First Name/ Last Name/ Mobile are required fields. Please enter in full',
+            message: 'Missing input.',
         });
     }
     const user = await User.findOne({ email }); //{email: email}
-    if (user) throw new Error(`Email: ${user.email} already existed!`);
+    if (user) throw new Error(`Email ${user.email} already existed!`);
     else {
         const newUser = await User.create(req.body);
         return res.status(200).json({
             success: newUser ? true : false,
-            newUser: newUser
+            message: newUser
                 ? `Create ${newUser.email} successfully. Please login`
                 : 'Something went wrong. Please check again.',
         });

@@ -17,7 +17,7 @@ const createProductCategory = asyncHandler(async (req, res) => {
 });
 //GET ALL PRODUCT CATEGORY
 const getProductCategories = asyncHandler(async (req, res) => {
-    const proCategories = await ProductCategory.find().select('title _id');
+    const proCategories = await ProductCategory.find();
     return res.json({
         success: proCategories ? true : false,
         proCategories: proCategories ? proCategories : 'Can not get all product categories',
@@ -46,6 +46,7 @@ const ultils = async (cate) => {
     await ProductCategory.create({
         title: cate?.cate,
         brand: cate?.brand,
+        image: cate?.image,
     });
 };
 //INSERT DATA TO DATABASE
