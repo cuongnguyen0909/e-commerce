@@ -8,7 +8,8 @@
             "Asus",
             "Nokia",
             "BlackBerry"
-        ]
+        ],
+        "image": "https://res.cloudinary.com/dupkxi4xl/image/upload/v1701578960/categories/cate-smartphone_b5shrq.webp"
     },
     {
         "cate": "Tablet",
@@ -19,7 +20,18 @@
             "Asus",
             "Lenovo",
             "Haier"
-        ]
+        ],
+        "image": "https://res.cloudinary.com/dupkxi4xl/image/upload/v1701578960/categories/cate-tablet_jztutr.avif"
+    },
+    {
+        "cate": "Speaker",
+        "brand": [],
+        "image": "https://res.cloudinary.com/dupkxi4xl/image/upload/v1701578959/categories/cate-accessories_xkqnft.webp"
+    },
+    {
+        "cate": "Camera",
+        "brand": [],
+        "image": "https://res.cloudinary.com/dupkxi4xl/image/upload/v1701578960/categories/cate-smartphone_b5shrq.webp"
     },
     {
         "cate": "Laptop",
@@ -30,7 +42,8 @@
             "Lenovo",
             "HP",
             "Macbook"
-        ]
+        ],
+        "image": "https://res.cloudinary.com/dupkxi4xl/image/upload/v1701578960/categories/cate-laptop_rfm0vs.avif"
     },
     {
         "cate": "Accessories",
@@ -41,7 +54,8 @@
             "Keyboard",
             "Mouse",
             "Cases"
-        ]
+        ],
+        "image": "https://res.cloudinary.com/dupkxi4xl/image/upload/v1701578959/categories/cate-accessories_xkqnft.webp"
     },
     {
         "cate": "Television",
@@ -52,7 +66,8 @@
             "Asus",
             "Nokia",
             "BlackBerry"
-        ]
+        ],
+        "image": "https://res.cloudinary.com/dupkxi4xl/image/upload/v1701578960/categories/cate-televisions_xvolmo.avif"
     },
     {
         "cate": "Printer",
@@ -62,6 +77,7 @@
             "Asus",
             "Lenovo",
             "Haier"
-        ]
+        ],
+        "image": "https://res.cloudinary.com/dupkxi4xl/image/upload/v1701578960/categories/cate-printer_yirq2f.avif"
     }
 ]
