@@ -9,17 +9,17 @@ export const navigation = [
     {
         id: 2,
         value: 'PRODUCTS',
-        path: `${path.PRODUCTS}`
+        path: `${path.PRODUCT}`
     },
     {
         id: 3,
         value: 'BLOGS',
-        path: `${path.BLOGS}`
+        path: `${path.BLOG}`
     },
     {
         id: 4,
         value: 'OUR SERVICES',
-        path: `${path.OUR_SERVICES}`
+        path: `${path.SERVICE}`
     },
     {
         id: 5,
