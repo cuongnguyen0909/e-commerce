@@ -4,7 +4,7 @@ import icons from '../ultils/icons';
 import { Link } from 'react-router-dom';
 import path from '../ultils/path';
 
-const { RiPhoneFill, MdMarkEmailRead, HiOutlineShoppingCart, FaUserShield } = icons;
+const { MdLocalPhone , MdMarkEmailRead, HiOutlineShoppingCart, FaUserShield } = icons;
 const Header = () => {
     return (
         <div className=" w-main flex justify-between h-[110px] py-[35px]">
@@ -14,7 +14,7 @@ const Header = () => {
             <div className="flex text-[13px] ">
                 <div className="flex flex-col px-6 border-r items-center">
                     <span className="flex gap-4 items-center">
-                        <RiPhoneFill color="red" />
+                        <MdLocalPhone  color="red" />
                         <span className="font-semibold"> (+84)123456789</span>
                     </span>
                     <span>Mon-Sat 9:00AM - 8:00PM</span>

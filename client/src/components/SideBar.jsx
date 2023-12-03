@@ -5,9 +5,6 @@ import { createSlug } from '../ultils/helpers';
 
 const SideBar = () => {
     const { categories } = useSelector(state => state.app);
-    // console.log(categories);
-    // const { isLoading } = useSelector(state => state.app);
-    // console.log(isLoading);
     return (
         <div className='flex flex-col border'>
             {categories?.map(item => (
