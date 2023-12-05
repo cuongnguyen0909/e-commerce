@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import * as actions from '../user/userAction';
 
 export const userSlice = createSlice({
     name: 'user',
@@ -6,31 +7,36 @@ export const userSlice = createSlice({
         isLoggedIn: false,
         current: null,
         token: null,
+        isLoading: false
     },
     reducers: {
-        register: (state, action) => {
+        login: (state, action) => {
             state.isLoggedIn = action.payload.isLoggedIn;
             state.current = action.payload.userData;
             state.token = action.payload.token;
+        },
+        logout: (state, action) => {
+            state.isLoggedIn = false;
+            state.token = null;
         }
     },
-    // extraReducers: (builder) => {
-    //     // start action(promise pending)
-    //     builder.addCase(actions.getCategories.pending, (state) => {
-    //         state.isLoading = true;
-    //     });
+    extraReducers: (builder) => {
+        // start action(promise pending)
+        builder.addCase(actions.getCurrent.pending, (state) => {
+            state.isLoading = true;
+        });
 
-    //     builder.addCase(actions.getCategories.fulfilled, (state, action) => {
-    //         // console.log(action);
-    //         state.isLoading = false;
-    //         state.categories = action.payload;
-    //     })
+        builder.addCase(actions.getCurrent.fulfilled, (state, action) => {
+            // console.log(action);
+            state.isLoading = false;
+            state.current = action.payload;//action.payload chinh la response.user ben userSlice.js
+        })
 
-    //     builder.addCase(actions.getCategories.rejected, (state, action) => {
-    //         state.isLoading = false;
-    //         state.errorMesaage = action.payload.message;
-    //     })
-    // }
+        builder.addCase(actions.getCurrent.rejected, (state, action) => {
+            state.isLoading = false;
+            state.current = null;
+        })
+    }
 })
-export const { register} = userSlice.actions; /// nam trong reducers
+export const { login, logout } = userSlice.actions; /// nam trong reducers
 export default userSlice.reducer;
