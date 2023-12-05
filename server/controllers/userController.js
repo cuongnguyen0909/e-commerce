@@ -4,37 +4,86 @@ const { generateAccessToken, generateRefreshToken } = require('../middlewares/jw
 const jwt = require('jsonwebtoken');
 const sendMail = require('../ultils/sendMail');
 const crypto = require('crypto');
+const makeToken = require('uniqid');
 // const user = require('../models/user');
 //api register
 //asyncHandler co cong dung hung nhung cai error va next toi thang tiep theo
+// const registerUser = asyncHandler(async (req, res) => {
+//     const { email, password, firstName, lastName } = req.body;
+//     if (!email || !password || !firstName || !lastName) {
+//         return res.status(400).json({
+//             status: false,
+//             message: 'Missing input.',
+//         });
+//     }
+//     const user = await User.findOne({ email }); //{email: email}
+//     if (user) throw new Error(`Email ${user.email} already existed!`);
+//     else {
+//         const newUser = await User.create(req.body);
+//         return res.status(200).json({
+//             status: newUser ? true : false,
+//             message: newUser
+//                 ? `Create ${newUser.email} statusfully. Please login`
+//                 : 'Something went wrong. Please check again.',
+//         });
+//     }
+// });
 const registerUser = asyncHandler(async (req, res) => {
-    const { email, password, firstName, lastName } = req.body;
-    if (!email || !password || !firstName || !lastName) {
+    const { email, password, firstName, lastName, mobile } = req.body;
+    if (!email || !password || !firstName || !lastName || !mobile) {
         return res.status(400).json({
-            sucess: false,
+            status: false,
             message: 'Missing input.',
         });
     }
     const user = await User.findOne({ email }); //{email: email}
     if (user) throw new Error(`Email ${user.email} already existed!`);
     else {
-        const newUser = await User.create(req.body);
-        return res.status(200).json({
-            success: newUser ? true : false,
-            message: newUser
-                ? `Create ${newUser.email} successfully. Please login`
-                : 'Something went wrong. Please check again.',
-        });
+        const token = makeToken();
+        const editedEmail = btoa(email) + '@' + token;
+        const newUser = await User.create({
+            email: editedEmail,
+            password,
+            firstName,
+            lastName,
+            mobile,
+        })
+        if (newUser) {
+            const html = `<h2>Register Code: </h2><br/><blockquote>${token}</blockquote>`;
+            await sendMail({ email, html, subject: 'Confirm register account in C-electronic' });
+        }
+        setTimeout(async () => {
+            await User.deleteOne({ email: editedEmail });
+        }, [5 * 60 * 1000]);
+        return res.json({
+            status: newUser ? true : false,
+            message: newUser ? 'Please check your email to complete registration.' : 'Something went wrong. Please check again.',
+        })
     }
 });
 
+//define final register after confirm email with token
+const finalRegister = asyncHandler(async (req, res) => {
+    const { token } = req.params;
+    //compare token with email
+    const notActiveEmail = await User.findOne({ email: { $regex: new RegExp(`${token}$`) } });
+    if (notActiveEmail) {
+        notActiveEmail.email = atob(notActiveEmail?.email?.split('@')[0]);
+        notActiveEmail.save();
+    }
+    return res.json({
+        status: notActiveEmail ? true : false,
+        response: notActiveEmail ? 'Register successfully. Please Login' : 'Something went wrong. Please check again.',
+    })
+
+})
 //refreshToken dung de cap  moi 1 cai accessToken
 //accessToken dung de xac thuc nguoi dung, phan quyen nguoi dung
 const login = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
         return res.status(400).json({
-            sucess: false,
+            status: false,
             message: 'Email/ Password are required fields. Please enter in full',
         });
     }
@@ -56,12 +105,12 @@ const login = asyncHandler(async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
         return res.status(200).json({
-            success: true,
+            status: true,
             accessToken,
             userData,
         });
     } else {
-        throw new Error('Invalid authentication!');
+        throw new Error('User not found or password not matched');
     }
 });
 
@@ -70,7 +119,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     const user = await User.findOne({ _id }).select('-refreshToken -password -role');
     return res.status(200).json({
-        success: user ? true : false,
+        status: user ? true : false,
         user: user ? user : 'User not found',
     });
 });
@@ -81,7 +130,7 @@ const deleteUser = asyncHandler(async (req, res) => {
     if (!_id) throw new Error('Missing Input');
     const response = await User.findByIdAndDelete({ _id }); //ham nay no van tra ve data user da xoa
     return res.status(200).json({
-        success: response ? true : false,
+        status: response ? true : false,
         deletedUser: response ? `User with email: ${response.email} deleted` : 'No user delete',
     });
 });
@@ -95,7 +144,7 @@ const updateUser = asyncHandler(async (req, res) => {
         new: true,
     }).select('-refreshToken -password -role'); //ham nay no van tra ve data user da xoa
     return res.status(200).json({
-        success: response ? true : false,
+        status: response ? true : false,
         updatedUser: response ? response : 'Can not update user!',
     });
 });
@@ -107,7 +156,7 @@ const updateUserByAdmin = asyncHandler(async (req, res) => {
         new: true,
     }).select('-refreshToken -password -role'); //ham nay no van tra ve data user da xoa
     return res.status(200).json({
-        success: response ? true : false,
+        status: response ? true : false,
         updatedUser: response ? response : 'Can not update user!',
     });
 });
@@ -115,7 +164,7 @@ const updateUserByAdmin = asyncHandler(async (req, res) => {
 const getAllUser = asyncHandler(async (req, res) => {
     const users = await User.find().select('-refreshToken -password -role');
     return res.status(200).json({
-        success: users ? true : false,
+        status: users ? true : false,
         users,
     });
 });
@@ -134,7 +183,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         refreshToken: cookie.refreshToken,
     });
     return res.status(200).json({
-        success: user ? true : false,
+        status: user ? true : false,
         newAccessToken: user ? generateAccessToken(user._id, user.role) : 'Refresh Token not matched',
     });
 });
@@ -152,8 +201,8 @@ const logout = asyncHandler(async (req, res) => {
         secure: true,
     });
     return res.status(200).json({
-        success: true,
-        message: 'Logout successfully',
+        status: true,
+        message: 'Logout statusfully',
     });
 });
 
@@ -167,7 +216,7 @@ const logout = asyncHandler(async (req, res) => {
 // CREATE (POST) + PUT - gui tu body
 // Get + delete = gui theo query (?xxx&xxxx)
 const forgotPassword = asyncHandler(async (req, res) => {
-    const { email } = req.query;
+    const { email } = req.body;
     if (!email) {
         throw new Error('Missing Email');
     }
@@ -182,16 +231,17 @@ const forgotPassword = asyncHandler(async (req, res) => {
     await user.save();
 
     const html = `Please click the link below to change your password.This link will expire after 15 minutes. 
-    <a href=${process.env.URL_SERVER}/api/user/resetpassword/${resetToken}>Click here</a>`;
+    <a href=${process.env.CLIENT_URL}/resetpassword/${resetToken}> Click here</a> `;
 
     const data = {
         email,
         html,
+        subject: 'Forgot password'
     };
     const result = await sendMail(data);
     return res.status(200).json({
-        success: result ? true : false,
-        result,
+        status: result.response.includes?.('OK') ? true : false,
+        message: result.response.includes?.('OK') ? 'Please check your email to reset password.' : 'Mail may be wrong. Please check again.'
     });
 });
 
@@ -200,7 +250,9 @@ const resetPassword = asyncHandler(async (req, res) => {
     if (!password || !token) {
         throw new Error('Missing input');
     }
+    //tim user co passwordResetToken = token va passwordResetExpired > Date.now()
     const passwordResetToken = await crypto.createHash('sha256').update(token).digest('hex');
+    // find one user in database have passwordResetToken = token and passwordResetExpired > Date.now()
     const user = await User.findOne({
         passwordResetToken,
         passwordResetExpired: { $gt: Date.now() },
@@ -208,18 +260,21 @@ const resetPassword = asyncHandler(async (req, res) => {
     if (!user) {
         throw new Error('Invalid reset token');
     }
-
+    //if user exist => update password
     user.password = password;
     user.passwordResetToken = undefined;
     user.passwordChangeAt = Date.now();
     user.passwordResetExpired = undefined;
 
+    //then save user
     await user.save();
     return res.status(200).json({
-        success: user ? true : false,
-        message: user ? 'Updated password successfully' : 'Something went wrong!',
+        status: user ? true : false,
+        message: user ? 'Updated password statusfully' : 'Something went wrong!',
     });
 });
+
+//update address
 const updateAddress = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     if (!req.body.address) throw new Error('Missing input');
@@ -231,7 +286,7 @@ const updateAddress = asyncHandler(async (req, res) => {
         { new: true },
     ).select('-refreshToken -password -role');
     return res.json({
-        success: response ? true : false,
+        status: response ? true : false,
         updatedUser: response ? response : 'Can not update new address',
     });
 });
@@ -255,7 +310,7 @@ const updateCart = asyncHandler(async (req, res) => {
                 },
             );
             return res.json({
-                success: response ? true : false,
+                status: response ? true : false,
                 updatedUser: response ? response : 'Can not update cart',
             });
         } else {
@@ -267,7 +322,7 @@ const updateCart = asyncHandler(async (req, res) => {
                 { new: true },
             );
             return res.json({
-                success: response ? true : false,
+                status: response ? true : false,
                 updatedUser: response ? response : 'Can not update cart',
             });
         }
@@ -280,12 +335,12 @@ const updateCart = asyncHandler(async (req, res) => {
             { new: true },
         );
         return res.json({
-            success: response ? true : false,
+            status: response ? true : false,
             updatedUser: response ? response : 'Can not update cart',
         });
     }
     return res.json({
-        success: response ? true : false,
+        status: response ? true : false,
         updatedUser: response ? response : 'Can not update new address',
     });
 });
@@ -303,4 +358,5 @@ module.exports = {
     updateUserByAdmin,
     updateAddress,
     updateCart,
+    finalRegister
 };
