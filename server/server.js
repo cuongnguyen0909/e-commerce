@@ -13,6 +13,7 @@ app.use(
     cors({
         origin: process.env.CLIENT_URL,
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        credentials: true, // allow session cookie from browser to pass through
     }),
 );
 //su dung cookie
