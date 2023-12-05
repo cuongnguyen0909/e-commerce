@@ -5,7 +5,7 @@ const asyncHandler = require('express-async-handler');
 const createBlogCategory = asyncHandler(async (req, res) => {
     const newBlogCategory = await BlogCategory.create(req.body);
     return res.json({
-        success: newBlogCategory ? true : false,
+        status: newBlogCategory ? true : false,
         createdBlogCategory: newBlogCategory ? newBlogCategory : 'Can not create new Blog Category',
     });
 });
@@ -13,7 +13,7 @@ const createBlogCategory = asyncHandler(async (req, res) => {
 const getBlogCategories = asyncHandler(async (req, res) => {
     const blogCategories = await BlogCategory.find().select('title _id');
     return res.json({
-        success: blogCategories ? true : false,
+        status: blogCategories ? true : false,
         blogCategories: blogCategories ? blogCategories : 'Can not get all blog categories',
     });
 });
@@ -22,7 +22,7 @@ const updateBlogCategory = asyncHandler(async (req, res) => {
     const { bcid } = req.params;
     const updatedBlogCategory = await BlogCategory.findByIdAndUpdate(bcid, req.body, { new: true });
     return res.json({
-        success: updatedBlogCategory ? true : false,
+        status: updatedBlogCategory ? true : false,
         updatedBlogCategory: updatedBlogCategory ? updatedBlogCategory : 'Can not update blog categories',
     });
 });
@@ -31,7 +31,7 @@ const deleteBlogCategory = asyncHandler(async (req, res) => {
     const { bcid } = req.params;
     const deletedBlogCategory = await BlogCategory.findByIdAndDelete(bcid);
     return res.json({
-        success: deletedBlogCategory ? true : false,
+        status: deletedBlogCategory ? true : false,
         deletedBlogCategory: deletedBlogCategory ? deletedBlogCategory : 'Can not delete blog categories',
     });
 });

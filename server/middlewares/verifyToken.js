@@ -15,7 +15,7 @@ const verifyAccessToken = asyncHandler(async (req, res, next) => {
                 console.log(user);
                 // Trả về phản hồi lỗi 401 nếu token không hợp lệ
                 return res.status(401).json({
-                    success: false,
+                    status: false,
                     message: 'Invalid access token'
                 });
             } else {
@@ -31,7 +31,7 @@ const verifyAccessToken = asyncHandler(async (req, res, next) => {
     } else {
         // Trả về phản hồi lỗi 401 nếu không tìm thấy chuỗi 'Bearer' trong header Authorization
         return res.status(401).json({
-            success: false,
+            status: false,
             message: 'Required authentication'
         });
     }

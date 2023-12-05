@@ -10,21 +10,20 @@ const FeatureProduct = () => {
     const fetchProducts = async () => {
         try {
             const response = await apiGetProducts({ limit: 9, 'totalRatings[gt]': 3, 'price[gt]': 1000000 })
-            if (response.success) {
+            // console.log(response);
+            if (response?.status) {
                 // console.log(response);
                 setProducts(response.products);
             }
         } catch (error) {
-            console.log(error);
         }
     }
-    console.log(products);
     useEffect(() => {
         fetchProducts();
 
     }, []);
     return (
-        <div className='w-full'>
+        <div className='w-main'>
             <h3 className='text-[20px] uppercase font-semibold py-[15px] border-b-2 border-main '>
                 feature product
             </h3>

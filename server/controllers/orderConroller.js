@@ -27,7 +27,7 @@ const createOrder = asyncHandler(async (req, res) => {
     }
     const result = await Order.create(createdData);
     return res.json({
-        success: result ? true : false,
+        status: result ? true : false,
         result: result ? result : 'Something went wrong',
     });
 });
@@ -41,7 +41,7 @@ const updateStatusOrder = asyncHandler(async (req, res) => {
     }
     const response = await Order.findByIdAndUpdate(oid, { status }, { new: true });
     return res.json({
-        success: response ? true : false,
+        status: response ? true : false,
         result: response ? response : 'Something went wrong',
     });
 });
@@ -51,7 +51,7 @@ const getOrderByUser = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     const response = await Order.find({ orderBy: _id });
     return res.json({
-        success: response ? true : false,
+        status: response ? true : false,
         result: response ? response : 'Something went wrong',
     });
 });
@@ -61,7 +61,7 @@ const getOrders = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     const response = await Order.find();
     return res.json({
-        success: response ? true : false,
+        status: response ? true : false,
         result: response ? response : 'Something went wrong',
     });
 });

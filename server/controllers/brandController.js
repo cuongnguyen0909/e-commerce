@@ -5,7 +5,7 @@ const asyncHandler = require('express-async-handler');
 const createBrand = asyncHandler(async (req, res) => {
     const newBrand = await Brand.create(req.body);
     return res.json({
-        success: newBrand ? true : false,
+        status: newBrand ? true : false,
         createdBrand: newBrand ? newBrand : 'Can not create new brand',
     });
 });
@@ -13,7 +13,7 @@ const createBrand = asyncHandler(async (req, res) => {
 const getBrands = asyncHandler(async (req, res) => {
     const brands = await Brand.find();
     return res.json({
-        success: brands ? true : false,
+        status: brands ? true : false,
         brands: brands ? brands : 'Can not get all brand',
     });
 });
@@ -24,7 +24,7 @@ const updateBrand = asyncHandler(async (req, res) => {
         new: true,
     });
     return res.json({
-        success: updatedBrand ? true : false,
+        status: updatedBrand ? true : false,
         updatedBrand: updatedBrand ? updatedBrand : 'Can not update brand',
     });
 });
@@ -33,7 +33,7 @@ const deleteBrand = asyncHandler(async (req, res) => {
     const { brid } = req.params;
     const deletedBrand = await Brand.findByIdAndDelete(brid);
     return res.json({
-        success: deletedBrand ? true : false,
+        status: deletedBrand ? true : false,
         deletedBrand: deletedBrand ? deletedBrand : 'Can not delete brand',
     });
 });

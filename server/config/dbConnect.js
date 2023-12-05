@@ -9,7 +9,7 @@ const dbConnect = async () => {
         // 2: connecting
         // 3: disconnecting
         if (connection.connection.readyState === 1) {
-            console.log('Database connection sucessfully');
+            console.log('Database connection successfully');
         } else {
             console.log('Connecting to DB');
         }

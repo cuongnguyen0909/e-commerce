@@ -16,7 +16,7 @@ const DealDaily = () => {
     const fetchDealDaily = async () => {
         try {
             const response = await apiGetProducts({ limit: 1, totalRatings: 5, 'price[gt]': 1000000 });
-            if (response.success) {
+            if (response.status) {
                 setDeadaily(response.products[0]);
                 const today = `${monment().format('YYYY-MM-DD')} 5:00:00`;
                 const seconds = new Date(today).getTime() - new Date().getTime() + 24 * 60 * 60 * 1000; //24h

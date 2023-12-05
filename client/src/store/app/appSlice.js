@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import * as actions from './asyncAction';
+import * as actions from './appAction';
 
 export const appSlice = createSlice({
     name: 'app',
@@ -22,11 +22,12 @@ export const appSlice = createSlice({
             // console.log(action);
             state.isLoading = false;
             state.categories = action.payload;
+            // console.log(action.payload);
         })
 
         builder.addCase(actions.getCategories.rejected, (state, action) => {
             state.isLoading = false;
-            state.errorMesaage = action.payload.message;
+            state.errorMesaage = action.payload?.message;
         })
     }
 })

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import * as actions from '../products/asyncAction';
+import * as actions from './productAction';
 
 export const productSlice = createSlice({
     name: 'product',

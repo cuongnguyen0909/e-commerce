@@ -12,7 +12,7 @@ const createCoupon = asyncHandler(async (req, res) => {
         expired: Date.now() + +expired * 24 * 60 * 60 * 1000,
     });
     return res.json({
-        success: newCoupon ? true : false,
+        status: newCoupon ? true : false,
         createdCoupon: newCoupon ? newCoupon : 'Can not create new coupon',
     });
 });
@@ -20,7 +20,7 @@ const createCoupon = asyncHandler(async (req, res) => {
 const getCoupons = asyncHandler(async (req, res) => {
     const coupons = await Coupon.find().select('-createdAt -updatedAt');
     return res.json({
-        success: coupons ? true : false,
+        status: coupons ? true : false,
         coupons: coupons ? coupons : 'Can not get coupons',
     });
 });
@@ -37,7 +37,7 @@ const updateCoupon = asyncHandler(async (req, res) => {
         new: true,
     });
     return res.json({
-        success: updatedCoupon ? true : false,
+        status: updatedCoupon ? true : false,
         updatedCoupon: updatedCoupon ? updatedCoupon : 'Can not update coupon',
     });
 });
@@ -47,7 +47,7 @@ const deleteCoupon = asyncHandler(async (req, res) => {
 
     const deletedCoupon = await Coupon.findByIdAndDelete(cid);
     return res.json({
-        success: deletedCoupon ? true : false,
+        status: deletedCoupon ? true : false,
         deletedCoupon: deletedCoupon ? deletedCoupon : 'Can not delete coupon',
     });
 });

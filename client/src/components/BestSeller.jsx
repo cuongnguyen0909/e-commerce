@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { apiGetProducts } from '../apis/product';
-import { getNewProduct } from '../store/products/asyncAction';
+import { getNewProduct } from '../store/products/productAction';
 import { CustomSlider } from './';
 
 const tabs = [
@@ -16,15 +16,15 @@ const BestSeller = () => {
     const { newProduct } = useSelector(state => state.products);
     const fetchProducts = async () => {
         try {
-            const response = await apiGetProducts({ sort: '-cretedAt', 'totalRatings[gt]': 2.5, 'price[gt]': '15000000' });
-            if (response.success) {
+            const response = await apiGetProducts({ sort: '-cretedAt', 'totalRatings[gt]': 3, 'price[gt]': '8000000' });
+            if (response.status) {
                 setBestSeller(response.products);
             }
-            if (response.success) {
+            if (response.status) {
                 newProduct = response.products;
             }
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     };
     useEffect(() => {
@@ -34,8 +34,7 @@ const BestSeller = () => {
     return (
         <div>
             <div className='flex text-[20px] '>
-
-                {tabs.map(item => (
+                {tabs?.map(item => (
                     <span key={item.id} className={`flex items-start cursor-pointer font-semibold pr-5 mr-5 uppercase border-r text-gray-400 ${activeTab === item.id ? 'text-gray-950' : ''}`}
                         onClick={() => setActiveTab(item.id)}
                     >{item.name}</span>

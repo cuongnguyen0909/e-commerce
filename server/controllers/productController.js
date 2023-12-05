@@ -15,7 +15,7 @@ const createProduct = asyncHandler(async (req, res) => {
 
     const newProduct = await Product.create(req.body);
     return res.status(200).json({
-        success: newProduct ? true : false,
+        status: newProduct ? true : false,
         createdProduct: newProduct ? newProduct : 'Can not create new product',
     });
 });
@@ -26,7 +26,7 @@ const getOneProduct = asyncHandler(async (req, res) => {
     const product = await Product.findById(pid).populate('ratings.postedBy', 'firstName lastName');
     console.log(product?.ratings?.postedBy);
     return res.status(200).json({
-        success: product ? true : false,
+        status: product ? true : false,
         product: product ? product : 'Can not get product',
         rs: product?.ratings?.postedBy,
     });
@@ -92,7 +92,7 @@ const getProducts = asyncHandler(async (req, res) => {
     const total = await Product.countDocuments(formattedQuery);
     // Trả về kết quả của API
     return res.status(200).json({
-        success: response ? true : false,
+        status: response ? true : false,
         total,
         results: response.length,
         products: response ? response : 'Can not get products',
@@ -109,7 +109,7 @@ const updateProduct = asyncHandler(async (req, res) => {
         new: true,
     });
     return res.status(200).json({
-        success: updatedProduct ? true : false,
+        status: updatedProduct ? true : false,
         updatedProduct: updatedProduct ? updatedProduct : 'Can not update product',
     });
 });
@@ -120,7 +120,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
     const deletedProduct = await Product.findByIdAndDelete(pid);
     return res.status(200).json({
-        success: deletedProduct ? true : false,
+        status: deletedProduct ? true : false,
         deletedProduct: deletedProduct ? deletedProduct : 'Can not delete product',
     });
 });
@@ -157,7 +157,7 @@ const ratingProduct = asyncHandler(async (req, res) => {
     updatedProduct.totalRatings = (sumRatings / ratingCount).toFixed(1);
     await updatedProduct.save();
     return res.status(200).json({
-        success: true,
+        status: true,
         updatedProduct,
     });
 });
@@ -175,7 +175,7 @@ const uploadImageProduct = asyncHandler(async (req, res) => {
         { new: true },
     );
     return res.json({
-        success: response ? true : false,
+        status: response ? true : false,
         updatedProduct: response ? response : 'Can not upload images product',
     });
 });
@@ -206,7 +206,7 @@ const insertData = asyncHandler(async (req, res) => {
     }
     await Promise.all(promises);
     return res.json({
-        success: true,
+        status: true,
     });
 });
 module.exports = {

@@ -6,9 +6,9 @@ const Home = () => {
     const { newProduct } = useSelector(state => state.products);
     const { categories } = useSelector(state => state.app);
     const { isLoggedIn, current } = useSelector(state => state.user);
-    console.log({ isLoggedIn, current });
+    // console.log({ isLoggedIn, current });
     return (
-        <>
+        <div className='mt-6'>
             <div className="w-main flex ">
                 <div className="flex flex-col gap-5 w-[25%] flex-auto">
                     <SideBar />
@@ -22,7 +22,7 @@ const Home = () => {
             <div className='my-8'>
                 <FeatureProduct />
             </div>
-            <div className='my-8 w-full'>
+            <div className='my-8 w-main'>
                 <h3 className='text-[20px] uppercase font-semibold py-[15px] border-b-2 border-main '>
                     new arrivals
                 </h3>
@@ -32,7 +32,7 @@ const Home = () => {
                     />
                 </div>
             </div>
-            <div className='my-8 w-full'>
+            <div className='my-8 w-main'>
                 <h3 className='text-[20px] uppercase font-semibold py-[15px] border-b-2 border-main '>
                     hot collections
                 </h3>
@@ -47,13 +47,13 @@ const Home = () => {
                     ))}
                 </div>
             </div>
-            <div className='my-8 w-full'>
+            <div className='my-8 w-main'>
                 <h3 className='text-[20px] uppercase font-semibold py-[15px] border-b-2 border-main '>
                     blog posts
                 </h3>
 
             </div>
-        </>
+        </div>
 
     );
 };

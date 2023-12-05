@@ -6,3 +6,5 @@ export { default as DetailProduct } from './DetailProduct';
 export { default as Blog } from './Blog';
 export { default as FAQs } from './FAQs';
 export { default as Service } from './Service';
+export { default as FinalRegister } from './FinalRegister';
+export { default as ResetPassword } from './ResetPassword';

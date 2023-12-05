@@ -9,7 +9,7 @@ const createNewBlog = asyncHandler(async (req, res) => {
     }
     const newBlog = await Blog.create(req.body);
     return res.json({
-        success: newBlog ? true : false,
+        status: newBlog ? true : false,
         newBlog: newBlog ? newBlog : 'Can not create new Blog',
     });
 });
@@ -17,7 +17,7 @@ const createNewBlog = asyncHandler(async (req, res) => {
 const getAllBlog = asyncHandler(async (req, res) => {
     const blogs = await Blog.find().select('title description category numbeViews author likes');
     return res.json({
-        success: blogs ? true : false,
+        status: blogs ? true : false,
         blogs: blogs ? blogs : 'Can not get blogs',
     });
 });
@@ -31,7 +31,7 @@ const updateBlog = asyncHandler(async (req, res) => {
         new: true,
     });
     return res.json({
-        success: updatedBlog ? true : false,
+        status: updatedBlog ? true : false,
         updatedBlog: updatedBlog ? updatedBlog : 'Can not update blog',
     });
 });
@@ -40,7 +40,7 @@ const deleteBlog = asyncHandler(async (req, res) => {
     const { bid } = req.params;
     const deletedBlog = await Blog.findByIdAndDelete(bid);
     return res.json({
-        success: deletedBlog ? true : false,
+        status: deletedBlog ? true : false,
         deletedBlog: deletedBlog ? deletedBlog : 'Can not update blog',
     });
 });
@@ -68,7 +68,7 @@ const likeBlog = asyncHandler(async (req, res) => {
             { new: true },
         );
         return res.json({
-            success: response ? true : false,
+            status: response ? true : false,
             result: response,
         });
     }
@@ -82,13 +82,13 @@ const likeBlog = asyncHandler(async (req, res) => {
             { new: true },
         );
         return res.json({
-            success: response ? true : false,
+            status: response ? true : false,
             result: response,
         });
     } else {
         const response = await Blog.findByIdAndUpdate(bid, { $push: { likes: _id } }, { new: true });
         return res.json({
-            success: response ? true : false,
+            status: response ? true : false,
             result: response,
         });
     }
@@ -108,7 +108,7 @@ const disLikeBlog = asyncHandler(async (req, res) => {
             { new: true },
         );
         return res.json({
-            success: response ? true : false,
+            status: response ? true : false,
             result: response,
         });
     }
@@ -122,13 +122,13 @@ const disLikeBlog = asyncHandler(async (req, res) => {
             { new: true },
         );
         return res.json({
-            success: response ? true : false,
+            status: response ? true : false,
             result: response,
         });
     } else {
         const response = await Blog.findByIdAndUpdate(bid, { $push: { disLikes: _id } }, { new: true });
         return res.json({
-            success: response ? true : false,
+            status: response ? true : false,
             result: response,
         });
     }
@@ -141,7 +141,7 @@ const getOneBlog = asyncHandler(async (req, res) => {
     console.log(blog);
     // console.log(blog?.likes?.forEach(item => console.log(item._id)));
     return res.json({
-        success: blog ? true : false,
+        status: blog ? true : false,
         blog: blog ? blog : 'Can not get blog',
     });
 });
@@ -150,7 +150,7 @@ const uploadImageBlog = asyncHandler(async (req, res) => {
     if (!req.file) throw new Error('Missing Input');
     const response = await Blog.findByIdAndUpdate(bid, { image: req.file.path }, { new: true });
     return res.json({
-        success: response ? true : false,
+        status: response ? true : false,
         updatedBlog: response ? response : 'Can not upload images blog',
     });
 });

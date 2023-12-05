@@ -1,10 +1,10 @@
 import React from 'react';
-
+import banner from '../assets/BANNER.jpg';
 const Banner = () => {
     return (
-        <div className="w-full ">
+        <div className="w-main ">
             <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvrvYxh3xBUf_vLjBHJXwulE9s6GxL1kviFA&usqp=CAU"
+                src={banner}
                 alt="Banner"
                 className="h-[400px] w-full object-cover"
             />
