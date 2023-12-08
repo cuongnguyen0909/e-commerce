@@ -1,12 +1,12 @@
 import React from 'react';
-import { Banner, BestSeller, SideBar, DealDaily, FeatureProduct, HotCollection, CustomSlider } from '../../components';
 import { useSelector } from 'react-redux';
+import { Banner, BestSeller, CustomSlider, FeatureProduct, HotCollection, SideBar } from '../../components';
 
 const Home = () => {
     const { newProduct } = useSelector(state => state.products);
     const { categories } = useSelector(state => state.app);
     const { isLoggedIn, current } = useSelector(state => state.user);
-    // console.log({ isLoggedIn, current });
+
     return (
         <div className='mt-6'>
             <div className="w-main flex ">
@@ -28,6 +28,7 @@ const Home = () => {
                 </h3>
                 <div className='mt-4 mx-[-10px]'>
                     <CustomSlider
+                        activeTab={2}
                         newestProduct={newProduct}
                     />
                 </div>
@@ -51,10 +52,8 @@ const Home = () => {
                 <h3 className='text-[20px] uppercase font-semibold py-[15px] border-b-2 border-main '>
                     blog posts
                 </h3>
-
             </div>
         </div>
-
     );
 };
 

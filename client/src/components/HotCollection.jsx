@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import icons from '../ultils/icons'
 
 const { MdNavigateNext } = icons;
@@ -21,4 +21,4 @@ const HotCollection = ({ title, image, brand }) => {
     )
 }
 
-export default HotCollection
+export default memo(HotCollection)

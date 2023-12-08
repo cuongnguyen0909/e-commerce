@@ -6,7 +6,8 @@ export const createSlug = (str) => {
 }
 
 export const formatMoney = (number) => {
-    return (+number).toLocaleString('vi-VN');
+    return (Math.round(number / 1000) * 1000).toLocaleString();
+    // return (+number).toLocaleString('vi-VN');
 }
 
 export const renderStarFromNumber = (number, size) => {

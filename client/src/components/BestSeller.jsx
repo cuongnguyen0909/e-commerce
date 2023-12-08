@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { apiGetProducts } from '../apis/product';
 import { getNewProduct } from '../store/products/productAction';
@@ -54,4 +54,4 @@ const BestSeller = () => {
     )
 }
 
-export default BestSeller;
+export default memo(BestSeller);

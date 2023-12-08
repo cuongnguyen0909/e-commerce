@@ -1,13 +1,14 @@
+
 const path = {
     PUBLIC: '/',
     HOME: '',
     ALL: '*',
     LOGIN: 'login',
-    PRODUCT: 'product',
+    LISTPRODUCT: ':category',
     BLOG: 'blog',
     SERVICE: 'service',
     FAQS: 'faqs',
-    DETAIL_PRODUCT__CATEGORY__PID__TITLE: ':category/:pid/:title',
+    DETAIL_PRODUCT__CATEGORY__PID__TITLE: `:category/:pid/:title`,
     FINAL_REGISTER: 'finalregister/:status',
     RESET_PASSWORD: 'resetpassword/:token',
 }

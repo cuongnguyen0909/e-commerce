@@ -1,10 +1,9 @@
-import React, { useState, useEffect, memo } from 'react';
 import monment from 'moment';
-import icons from '../ultils/icons';
+import React, { memo, useEffect, useState } from 'react';
 import { apiGetProducts } from '../apis/product';
-import { formatMoney, renderStarFromNumber } from '../ultils/helpers';
+import { formatMoney, renderStarFromNumber, secondsToHms } from '../ultils/helpers';
+import icons from '../ultils/icons';
 import { CountDown } from './';
-import { secondsToHms } from '../ultils/helpers';
 const { FaStar, IoMenu } = icons;
 let idInterval;
 const DealDaily = () => {
@@ -76,7 +75,9 @@ const DealDaily = () => {
                 <span className='line-clamp-1'>
                     {deadaily?.title}
                 </span>
-                <span className='flex h-4'>{renderStarFromNumber(deadaily?.totalRatings, 20)}</span>
+                <span className='flex h-4'> {renderStarFromNumber(deadaily?.totalRatings, 20)?.map((item, index) => (
+                    <span key={index}> {item}</span>
+                ))}</span>
                 <span>
                     {`${formatMoney(deadaily?.price)} VND`}
                 </span>

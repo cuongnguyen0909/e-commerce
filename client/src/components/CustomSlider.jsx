@@ -11,18 +11,26 @@ const settings = {
     autoplay: true,
     autoplaySpeed: 2000,
 };
-const CustomSlider = ({ activeTab, bestSeller, newestProduct }) => {
+const CustomSlider = ({ activeTab, bestSeller, newestProduct, relatedProduct, normal }) => {
     return (
         <div>
-            <Slider {...settings}>
-                {activeTab === 1
-                    ? bestSeller?.map(item => (
-                        <Product key={item._id} productData={item} isNew={false} />
-                    ))
-                    : newestProduct?.map(item => (
-                        <Product key={item._id} productData={item} isNew={true} />
+            {activeTab ? (
+                <Slider {...settings} className='custom-slider'>
+                    {activeTab === 1
+                        ? bestSeller?.map(item => (
+                            <Product key={item._id} productData={item} isNew={false} />
+                        ))
+                        : newestProduct?.map(item => (
+                            <Product key={item._id} productData={item} isNew={true} />
+                        ))}
+                </Slider>
+            ) : (
+                <Slider {...settings} className='custom-slider'>
+                    {relatedProduct?.map(item => (
+                        <Product key={item._id} productData={item} normal={normal} />
                     ))}
-            </Slider>
+                </Slider>
+            )}
         </div>
     )
 }

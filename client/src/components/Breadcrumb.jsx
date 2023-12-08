@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { Link } from 'react-router-dom';
 import useBreadCrumb from 'use-react-router-breadcrumbs';
 import icons from '../ultils/icons';
@@ -6,11 +6,11 @@ import icons from '../ultils/icons';
 const { MdNavigateNext } = icons;
 const Breadcrumb = ({ title, category }) => {
     const routes = [
-        { path: "/:category", breadcrumb: category },
         { path: "/", breadcrumb: "Home" },
-        { path: "/:category/:pid/:title", breadcrumb: title },
+        { path: ":category", breadcrumb: category },
+        { path: ":category/:pid/:title", breadcrumb: title },
     ]
-    console.log({ title, category });
+    // console.log({ title, category });
     const breadcrumb = useBreadCrumb(routes);
     // console.log(breadcrumb);
     return (
@@ -26,4 +26,4 @@ const Breadcrumb = ({ title, category }) => {
     )
 }
 
-export default Breadcrumb
+export default memo(Breadcrumb)

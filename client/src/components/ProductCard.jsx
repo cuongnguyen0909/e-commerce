@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { formatMoney, renderStarFromNumber } from '../ultils/helpers';
 
 const ProductCard = ({ price, totalRatings, thumb, title }) => {
@@ -13,7 +13,9 @@ const ProductCard = ({ price, totalRatings, thumb, title }) => {
                     <span>
                         {`${formatMoney(price)} VND`}
                     </span>
-                    <span className='flex h-4 '>{renderStarFromNumber(totalRatings, 14)}</span>
+                    <span className='flex h-4 '> {renderStarFromNumber(totalRatings, 14)?.map((item, index) => (
+                        <span key={index}> {item}</span>
+                    ))}</span>
                 </div>
             </div>
 
@@ -21,4 +23,4 @@ const ProductCard = ({ price, totalRatings, thumb, title }) => {
     )
 }
 
-export default ProductCard
+export default memo(ProductCard)

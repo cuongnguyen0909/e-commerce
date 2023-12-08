@@ -1,21 +1,24 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
-import { apiLogin, apiRegister, apiForgotPassword, apiFinalRegister } from '../../apis/user';
+import { apiFinalRegister, apiForgotPassword, apiLogin, apiRegister } from '../../apis/user';
 import background_login from '../../assets/background_login.jpg';
 import { Button, InputField } from '../../components';
 import { login } from '../../store/user/userSlice';
+import { validate } from '../../ultils/helpers';
 import path from '../../ultils/path';
-import { toast } from 'react-toastify';
-import { validate } from '../../ultils/helpers'
-
+import icons from '../../ultils/icons';
 const Login = () => {
+    //define icons
+    const { IoMdCloseCircleOutline } = icons;
     //define navigate
     const navigate = useNavigate();
+
     //define dispatch to dispatch action to redux store 
     const dispatch = useDispatch();
+
     //define resetPayload
     const resetPayload = () => {
         setPayload({
@@ -26,14 +29,24 @@ const Login = () => {
             mobile: ''
         })
     }
+    const handleCancelVerify = () => {
+        setVerifyEmail(false);
+        setToken('');
+    }
     const [verifyEmail, setVerifyEmail] = useState(false);
+
     //define invalidFields
     const [invalidFields, setInvalidFields] = useState([]);
+
     //define forgotPassword
     const [isForgotPassword, setIsForgotPassword] = useState(false);
+
     //define isRegister
     const [isRegister, setIsRegister] = useState(false);
+
+    //define token
     const [token, setToken] = useState('')
+
     //define payload for login and register
     const [payload, setPayload] = useState(
         {
@@ -57,18 +70,19 @@ const Login = () => {
 
         }
     }
+
     //reset payload when isRegister change
     useEffect(() => {
         resetPayload();
+        // console.log(isRegister)
     }, [isRegister])
+
     //handle register when click 'Create an account'
     //set isRegister
     //use useCallBack to prevent re-render
     const handleSubmit = useCallback(async () => {
         //destructuring payload: firstName = payload.firstName, lastName = payload.lastName, data = payload
         const { firstName, lastName, mobile, ...data } = payload;
-        console.log(data);
-        console.log(payload);
         const invalidFields = isRegister ? validate(payload, setInvalidFields) : validate(data, setInvalidFields);
         if (invalidFields !== 0) {
             return;
@@ -92,7 +106,7 @@ const Login = () => {
             }
         }
 
-    }, [payload, isRegister, invalidFields])
+    }, [payload, isRegister])
 
     //handle final register
     const finalRegister = async () => {
@@ -102,9 +116,10 @@ const Login = () => {
                 .then(() => {
                     setIsRegister(false);
                     resetPayload();
+                    navigate(`/${path.LOGIN}`);
                 });
         } else {
-            Swal.fire('Oops', response.message, 'error')
+            Swal.fire('Oops', response.message, 'error');
         }
         setVerifyEmail(false);
         setToken('');
@@ -114,8 +129,10 @@ const Login = () => {
             {/* verify email */}
             {verifyEmail &&
                 <div className='flex flex-col justify-center items-center absolute top-[-400px] bottom-0 left-0 right-0 backdrop-brightness-50 z-50'>
-                    <div className='bg-white w-[500px] rounded-md p-8 flex flex-col'>
+                    <div className='bg-white w-[500px] rounded-md p-8 flex flex-col'
+                    >
                         <div className='flex flex-col justify-center'>
+                            <IoMdCloseCircleOutline className=' cursor-pointer' onClick={handleCancelVerify} />
                             <h4>We sent a code to your email. Please enter the code below to verify your email.</h4>
                             <span className='text-[12px] font-semibold text-red-700'>
                                 Don't share this code with anyone else.
@@ -129,7 +146,6 @@ const Login = () => {
                             className='px-4 py-2 bg-blue-700 font-semibold text-white rounded-md mt-2 w-full'
                             type='text' onClick={finalRegister}>
                             Submit
-
                         </button>
                     </div>
                 </div>}
@@ -146,8 +162,8 @@ const Login = () => {
                             value={email}
                             onChange={e => setEmail(e.target.value)} />
                         <div className='flex items-center justify-end gap-4'>
-                            <Button name='Submit' handleOnClick={handleForgotPassword} style='px-4 py-2 rounded-md text-white my-2 bg-blue-500 text-semibold' />
-                            <Button style='px-4 py-2 rounded-md text-white my-2 bg-main text-semibold bg-orange-500' name='Back' handleOnClick={() => setIsForgotPassword(false)} />
+                            <Button name='Submit' handleOnClick={handleForgotPassword} style={`px-4 py-2 rounded-md text-white my-2 bg-blue-500 text-semibold`} />
+                            <Button style={`px-4 py-2 rounded-md text-white my-2 bg-main text-semibold bg-orange-500`} name='Back' handleOnClick={() => setIsForgotPassword(false)} />
                         </div>
                     </div>
                 </div>}
@@ -175,7 +191,6 @@ const Login = () => {
                                 invalidFields={invalidFields}
                                 setInvalidFields={setInvalidFields}
                             />
-
                         </div>
                     }
                     <InputField

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { ProductCard } from './';
 import { apiGetProducts } from '../apis/product';
 import banner1 from '../assets/banner1.webp';
@@ -50,4 +50,4 @@ const FeatureProduct = () => {
     )
 }
 
-export default FeatureProduct
+export default memo(FeatureProduct)

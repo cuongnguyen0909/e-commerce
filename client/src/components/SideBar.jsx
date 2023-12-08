@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { createSlug } from '../ultils/helpers';
@@ -21,4 +21,4 @@ const SideBar = () => {
     )
 };
 
-export default SideBar;
+export default memo(SideBar);

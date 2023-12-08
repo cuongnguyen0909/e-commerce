@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import icons from '../ultils/icons';
 
 const { FaHeart, IoEyeSharp, IoMenu } = icons;
@@ -33,4 +33,4 @@ const SelectOptions = ({ icon }) => {
     )
 }
 
-export default SelectOptions; 
+export default memo(SelectOptions); 
