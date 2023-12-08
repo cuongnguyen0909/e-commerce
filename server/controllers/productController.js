@@ -56,15 +56,27 @@ const getProducts = asyncHandler(async (req, res) => {
     // console.log(queryString, typeof queryString);
     queryString = queryString.replace(/\b(gte|gt|lt|lte)\b/g, (matchedElement) => `$${matchedElement}`);
     // Chuyển đổi truy vấn đã định dạng thành đối tượng JSON
-    const formattedQuery = JSON.parse(queryString); //json->object
-    // console.log(formattedQuery, typeof (formattedQuery));
+    let formattedQueries = JSON.parse(queryString); //json->object
+    let colorQueryObject = {};
+    // console.log(formattedQueries, typeof (formattedQueries));
 
     // Filtering
     if (query?.title) {
-        formattedQuery.title = { $regex: query.title, $options: 'i' };
+        formattedQueries.title = { $regex: query.title, $options: 'i' };
     }
+    if (query?.category) {
+        formattedQueries.category = { $regex: query.category, $options: 'i' };
+    }
+    if (query?.color) {
+        delete formattedQueries.color;
+        const colorArray = query.color?.split(',');
+        const colorQuery = colorArray.map(item => ({ color: { $regex: item, $options: 'i' } }));
+        colorQueryObject = { $or: colorQuery };
+    }
+    const chainQuery = { ...colorQueryObject, ...formattedQueries };
+    // console.log(chainQuery)
     // Tạo một lệnh truy vấn mà không thực hiện nó ngay lập tức
-    let queryCommand = Product.find(formattedQuery);
+    let queryCommand = Product.find(chainQuery);
     // Thực hiện truy vấn bằng cách sử dụng await
 
     //Sorting
@@ -89,7 +101,7 @@ const getProducts = asyncHandler(async (req, res) => {
     const response = await queryCommand.exec();
     // console.log(response);
     // Đếm số lượng tài liệu thỏa mãn truy vấn
-    const total = await Product.countDocuments(formattedQuery);
+    const total = await Product.countDocuments(chainQuery);
     // Trả về kết quả của API
     return res.status(200).json({
         status: response ? true : false,
@@ -181,26 +193,45 @@ const uploadImageProduct = asyncHandler(async (req, res) => {
 });
 
 //FUNCTION INSERT DATA
+//FUNCTION INSERT DATA
 const ultils = async (product) => {
+    let price = Math.round(Number(product?.price?.match(/\d/g).join('')) / 100);
+
+    // Kiểm tra nếu category là laptop
+    if (product?.category[1] === 'laptop') {
+        // Đảm bảo giá lớn hơn 10.000.000
+        price = Math.max(price, 10000000);
+        // Đảm bảo giá không bé hơn 500.000
+        price = Math.max(price, 500000);
+    }
+
+    // Tính toán số lượng 5 sao
+    const totalRatings = Math.round(Math.random() * 5);
+    const totalProducts = await Product.countDocuments(); // Đếm tổng số lượng sản phẩm trong cơ sở dữ liệu
+
+    // Đảm bảo số lượng 5 sao nhiều hơn 60% tổng số lượng sản phẩm
+    const fiveStarCount = Math.max(Math.round(totalProducts * 0.6), totalRatings);
+
     await Product.create({
         title: product?.name,
         slug: slugify(product?.name) + Math.round(Math.random() * 1000) + '',
         description: product?.description,
         brand: product?.brand,
-        price: Math.round(Number(product?.price?.match(/\d/g).join('')) / 100),
+        price: price,
         category: product?.category[1],
         quantity: Math.round(Math.random() * 1000),
         sold: Math.round(Math.random() * 100),
         images: product?.images,
         color: product?.variants?.find((item) => item.label === 'Color')?.variants[0],
         thumb: product?.thumb,
-        totalRatings: Math.round(Math.random() * 5),
+        totalRatings: fiveStarCount, // Sử dụng số lượng 5 sao tính toán
     });
 };
+
 //INSERT DATA TO DATABASE
 const insertData = asyncHandler(async (req, res) => {
     const promises = [];
-    console.log(typeof data);
+    // console.log(typeof data);
     for (let product of data) {
         promises.push(ultils(product));
     }
