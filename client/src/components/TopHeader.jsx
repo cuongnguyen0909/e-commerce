@@ -12,9 +12,11 @@ const TopHeader = () => {
     const dispatch = useDispatch();
     const { isLoggedIn, current } = useSelector(state => state.user);
     useEffect(() => {
-        if (isLoggedIn) {
-            dispatch(getCurrent())
-        }
+        setTimeout(() => {
+            if (isLoggedIn) {
+                dispatch(getCurrent())
+            }
+        }, 100);
     }, [dispatch, isLoggedIn])
     return (
         <div className='h-[38px] w-full bg-main flex justify-center items-center'>
