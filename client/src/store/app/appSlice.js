@@ -5,12 +5,15 @@ export const appSlice = createSlice({
     name: 'app',
     initialState: {
         categories: null,
-        isLoading: false
+        isLoading: false,
+        isShowModal: false,
+        modalChildren: null,
     },
     reducers: {
-        // logout: (state) => {
-        //     state.isLoading = false;
-        // }
+        showModal: (state, action) => {
+            state.isShowModal = action.payload.isShowModal;
+            state.modalChildren = action.payload.modalChildren;
+        }
     },
     extraReducers: (builder) => {
         // start action(promise pending)
@@ -31,5 +34,5 @@ export const appSlice = createSlice({
         })
     }
 })
-// export const { } = appSlice.actions; /// nam trong reducers
+export const { showModal } = appSlice.actions; /// nam trong reducers
 export default appSlice.reducer;

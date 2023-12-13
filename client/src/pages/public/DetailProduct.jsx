@@ -7,7 +7,7 @@ import ReactImageMagnify from 'react-image-magnify';
 import { formatMoney, renderStarFromNumber } from '../../ultils/helpers';
 import { productExtraInfo } from '../../ultils/constants';
 import { apiGetProducts } from '../../apis/product';
-
+import DomPurify from 'dompurify';
 const settings = {
     dots: false,
     infinite: false,
@@ -21,10 +21,15 @@ const DetailProduct = () => {
     const [productData, setProductData] = useState(null);
     const [relatedProduct, setRelatedProduct] = useState(null)
     const [quantity, setQuantity] = useState(1);
+    const [currentImage, setCurrentImage] = useState(null);
+    const [update, setUpdate] = useState(false);
     // define function fetchProductData
     const fetchProductData = async () => {
         const response = await apiGetOneProduct(pid);
-        if (response.status) setProductData(response.product);
+        if (response.status) {
+            setProductData(response.product);
+            setCurrentImage(response?.product?.thumb);
+        }
     }
     const fetchProducts = async () => {
         const response = await apiGetProducts({ category: category.replace(category[0], category[0].toUpperCase()) });
@@ -43,14 +48,28 @@ const DetailProduct = () => {
         if (number < 1) return;
         setQuantity(number);
     }, [quantity])
+
+    const handleClickImage = (e, item) => {
+        e.stopPropagation();
+        setCurrentImage(item);
+    }
+    useEffect(() => {
+        if (pid) {
+            fetchProductData();
+            fetchProducts();
+        };
+        window.scrollTo(0, 200);
+    }, [pid])
+
     useEffect(() => {
         if (pid) fetchProductData();
-    }, [pid])
-    useEffect(() => {
-        if (category) fetchProducts();
-    }, [category])
+    }, [update])
+
+    const reRender = useCallback(() => {
+        setUpdate(!update);
+    }, [update])
     return (
-        <div className='w-full gap-2 '>
+        <div className='w-full gap-2'>
 
             {/* Breacrumd */}
             <div className='h-[81px] flex justify-center items-center bg-gray-100'>
@@ -70,10 +89,10 @@ const DetailProduct = () => {
                             smallImage: {
                                 alt: productData?.title,
                                 isFluidWidth: true,
-                                src: productData?.thumb,
+                                src: currentImage,
                             },
                             largeImage: {
-                                src: productData?.thumb,
+                                src: currentImage,
                                 width: 1800,
                                 height: 1500
                             }
@@ -85,8 +104,10 @@ const DetailProduct = () => {
                         <Slider {...settings} className='image-slider flex gap-2 justify-between'>
                             {productData?.images.map((item, index) => (
                                 <div className='w-full'>
-                                    <img src={item} alt={productData?.title}
-                                        className='object-contain border h-[143px]' />
+                                    <img
+                                        onClick={e => handleClickImage(e, item)}
+                                        src={item} alt={productData?.title}
+                                        className='object-contain border h-[143px] w-[143px] cursor-pointer' />
                                 </div>
                             ))}
                         </Slider>
@@ -109,12 +130,17 @@ const DetailProduct = () => {
                         </div>
                     </div>
                     <ul className='list-disc text-[14px] text-gray-600 pl-4'>
-                        {productData?.description.map((item, index) => (
-                            <li key={index} className='capitalize leading-6'>
+                        {productData?.description?.length > 1 &&
+                            productData?.description?.map((item, index) =>
+                            (<li key={index} className='capitalize leading-6'>
                                 {item}
-                            </li>
-                        )
-                        )}
+                            </li>)
+                            )}
+                        {productData?.description?.length === 1 &&
+                            <div
+                                className='text-sm line-clamp-[15]'
+                                dangerouslySetInnerHTML={{ __html: DomPurify.sanitize(productData?.description[0]) }}>
+                            </div>}
                     </ul>
 
                     {/* Quantity */}
@@ -138,7 +164,12 @@ const DetailProduct = () => {
                 </div>
             </div>
             <div className='w-main flex m-auto mt-4'>
-                <ProductInfomation />
+                <ProductInfomation
+                    totalRatings={productData?.totalRatings}
+                    nameProduct={productData?.title}
+                    ratings={productData?.ratings}
+                    pid={productData?._id}
+                    reRender={reRender} />
             </div>
             <div className='w-main flex m-auto my-8'>
                 <div className='w-full'>

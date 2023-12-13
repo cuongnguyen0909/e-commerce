@@ -8,7 +8,7 @@
 }
 .custom-slider button.slick-prev {
   left: 20px;
-  z-index: 999;
+  z-index: 40;
 }
 
 .custom-slider button.slick-next::before {
@@ -41,7 +41,7 @@
 
 .image-slider button.slick-prev {
   left: 0px;
-  z-index: 999;
+  z-index: 40;
 }
 
 .image-slider button.slick-next::before {
@@ -81,4 +81,29 @@ input::-webkit-inner-spin-button {
 
 .my-masonry-grid_column > div {
   margin-bottom: 15px;
+}
+
+.w500 {
+  width: 500px;
+}
+.form-input,
+.form-textarea,
+.form-select,
+.form-multiselect {
+  font-size: 14px;
+  line-height: 1rem /* 24px */;
+  padding-right: 0.25rem /* 12px */;
+}
+.form-select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 2px /* 8px */ center;
+  background-repeat: no-repeat;
+  background-size: 1.25em 1.25em;
+  /* padding-right: 2.5rem 40px; */
+  print-color-adjust: exact;
+  /* width: 90px; */
+}
+
+code {
+  white-space: initial;
 }

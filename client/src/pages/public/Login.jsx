@@ -3,16 +3,18 @@ import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
-import { apiFinalRegister, apiForgotPassword, apiLogin, apiRegister } from '../../apis/user';
+import { apiFinalRegister, apiForgotPassword, apiLogin, apiRegister } from '../../apis';
 import background_login from '../../assets/background_login.jpg';
-import { Button, InputField } from '../../components';
+import { Button, InputField, Loading } from '../../components';
 import { login } from '../../store/user/userSlice';
 import { validate } from '../../ultils/helpers';
 import path from '../../ultils/path';
 import icons from '../../ultils/icons';
+import { showModal } from '../../store/app/appSlice';
+
 const Login = () => {
     //define icons
-    const { IoMdCloseCircleOutline } = icons;
+    const { IoMdCloseCircleOutline, TiHomeOutline, IoReturnDownBackOutline } = icons;
     //define navigate
     const navigate = useNavigate();
 
@@ -88,7 +90,10 @@ const Login = () => {
             return;
         } else {
             if (isRegister) {
+                dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
                 const response = await apiRegister(payload);
+                dispatch(showModal({ isShowModal: false, modalChildren: null }));
+
                 if (response.status) {
                     setVerifyEmail(true);
                 } else {
@@ -132,7 +137,7 @@ const Login = () => {
                     <div className='bg-white w-[500px] rounded-md p-8 flex flex-col'
                     >
                         <div className='flex flex-col justify-center'>
-                            <IoMdCloseCircleOutline className=' cursor-pointer' onClick={handleCancelVerify} />
+                            <IoMdCloseCircleOutline className=' cursor-pointer flex justify-end' onClick={handleCancelVerify} />
                             <h4>We sent a code to your email. Please enter the code below to verify your email.</h4>
                             <span className='text-[12px] font-semibold text-red-700'>
                                 Don't share this code with anyone else.
@@ -162,19 +167,29 @@ const Login = () => {
                             value={email}
                             onChange={e => setEmail(e.target.value)} />
                         <div className='flex items-center justify-end gap-4'>
-                            <Button name='Submit' handleOnClick={handleForgotPassword} style={`px-4 py-2 rounded-md text-white my-2 bg-blue-500 text-semibold`} />
-                            <Button style={`px-4 py-2 rounded-md text-white my-2 bg-main text-semibold bg-orange-500`} name='Back' handleOnClick={() => setIsForgotPassword(false)} />
+                            <Button handleOnClick={handleForgotPassword} style={`px-4 py-2 rounded-md text-white my-2 bg-blue-500 text-semibold`}>
+                                Submit
+                            </Button>
+                            <Button style={`px-4 py-2 rounded-md text-white my-2 bg-main text-semibold bg-orange-500`} handleOnClick={() => setIsForgotPassword(false)}>
+                                Back
+                            </Button>
                         </div>
                     </div>
                 </div>}
 
             {/* //login and register */}
+
             <img src={background_login} alt="" className='h-full w-full object-cover' />
             <div className='absolute top-0 bottom-0 lefy-0 right-1/3 items-center justify-center flex'>
+                <Link to={`/${path.HOME}`} className='text-blue-500 hover:underline cursor-pointer text-[14px] m-auto'>
+                    <TiHomeOutline className={`text-[25px] text-gray-700 hover:text-red-700 ${!isRegister ? 'absolute top-[220px] left-[20px]' : 'absolute top-[150px] left-[20px]'}`} />
+                </Link>
                 <div className='p-8 bg-white flex flex-col items-center rounded-md min-w-[500px] '>
-                    <h1 className='text-[28px] font-semibold text-main mb-8'>
-                        {isRegister ? 'REGISTER' : 'LOGIN'}
-                    </h1>
+                    <div className='flex items-center'>
+                        <h1 className='text-[28px] font-semibold text-main mb-8 '>
+                            {isRegister ? 'REGISTER' : 'LOGIN'}
+                        </h1>
+                    </div>
                     {isRegister &&
                         <div className='flex items-center justify-center gap-2'>
                             <InputField
@@ -183,6 +198,7 @@ const Login = () => {
                                 nameKey='firstName'
                                 invalidFields={invalidFields}
                                 setInvalidFields={setInvalidFields}
+                                border
                             />
                             <InputField
                                 value={payload.lastName}
@@ -190,6 +206,7 @@ const Login = () => {
                                 nameKey='lastName'
                                 invalidFields={invalidFields}
                                 setInvalidFields={setInvalidFields}
+                                border
                             />
                         </div>
                     }
@@ -199,6 +216,9 @@ const Login = () => {
                         nameKey='email'
                         invalidFields={invalidFields}
                         setInvalidFields={setInvalidFields}
+                        style='w-[300px]'
+                        fullwidth
+                        border
                     />
                     <InputField
                         value={payload.password}
@@ -207,6 +227,8 @@ const Login = () => {
                         type='password'
                         invalidFields={invalidFields}
                         setInvalidFields={setInvalidFields}
+                        fullwidth
+                        border
                     />
                     {isRegister && <InputField
                         value={payload.mobile}
@@ -214,8 +236,12 @@ const Login = () => {
                         nameKey='mobile'
                         invalidFields={invalidFields}
                         setInvalidFields={setInvalidFields}
+                        fullwidth
+                        border
                     />}
-                    <Button name={isRegister ? 'Register' : 'Login'} handleOnClick={handleSubmit} fullWidth />
+                    <Button handleOnClick={handleSubmit} fullWidth >
+                        {isRegister ? 'Register' : 'Login'}
+                    </Button>
 
                     {/* define button */}
                     <div className='flex items-center justify-between my-2 w-full text-sm'>
@@ -226,9 +252,10 @@ const Login = () => {
                         {!isRegister && <span onClick={() => setIsRegister(true)}
                             className='text-blue-500 hover:underline cursor-pointer'>Create an account</span>}
                         {isRegister && <span onClick={() => setIsRegister(false)}
-                            className='text-blue-500 hover:underline cursor-pointer w-full text-center'>Go Login</span>}
+                            className='text-blue-500 hover:underline cursor-pointer text-center'>
+                            <IoReturnDownBackOutline className='text-[40px] hover:text-red-700 text-gray-800' />
+                        </span>}
                     </div>
-                    <Link to={`/${path.HOME}`} className='text-blue-500 hover:underline cursor-pointer text-[14px]'>Go Home</Link>
                 </div>
             </div>
         </div>

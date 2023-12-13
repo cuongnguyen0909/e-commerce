@@ -8,3 +8,4 @@ export { default as FAQs } from './FAQs';
 export { default as Service } from './Service';
 export { default as FinalRegister } from './FinalRegister';
 export { default as ResetPassword } from './ResetPassword';
+export { default as ShowProductSearch } from './ShowProductSearch';

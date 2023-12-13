@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { Breadcrumb, Product, FilterProduct, InputSelect } from '../../components'
-import { useParams, useSearchParams } from 'react-router-dom';
-import { apiGetProducts } from '../../apis';
+import React, { useCallback, useEffect, useState } from 'react';
 import Mansonry from 'react-masonry-css';
+import { createSearchParams, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { apiGetProducts } from '../../apis';
+import { Breadcrumb, FilterProduct, InputSelect, Pagination, Product } from '../../components';
 import { sorts } from '../../ultils/constants';
-import { useNavigate, createSearchParams } from 'react-router-dom';
 
 const breakpointColumnsObj = {
     default: 4,
@@ -30,20 +29,13 @@ const ListProduct = () => {
     const fetchProductsByCategory = async (queries) => {
         const response = await apiGetProducts(queries);
         if (response.status) {
-            setProducts(response.products)
+            setProducts(response)
         }
     }
 
     //useEffect fetch products by category
     useEffect(() => {
-        let param = [];
-        for (let i of params.entries()) {
-            param.push(i)
-        }
-        let queries = {};
-        for (let i of params) {
-            queries[i[0]] = i[1];
-        }
+        const queries = Object.fromEntries([...params]);
         // queries.color = queries.color;
         queries.category = category;
         let priceQuery = {};
@@ -54,16 +46,15 @@ const ListProduct = () => {
                     { price: { lte: Number(queries.to) } }
                 ]
             };
-
+            delete queries.price;
+        } else {
+            if (queries.from) {
+                queries.price = { gte: Number(queries.from) };
+            }
+            if (queries.to) {
+                queries.price = { lte: Number(queries.to) };
+            }
         }
-        delete queries.price;
-        if (queries.from) {
-            queries.price = { gte: Number(queries.from) };
-        }
-        if (queries.to) {
-            queries.price = { lte: Number(queries.to) };
-        }
-
         delete queries.from;
         delete queries.to;
         const finalQueries = { ...priceQuery, ...queries };
@@ -85,13 +76,16 @@ const ListProduct = () => {
     }, [sort])
 
     useEffect(() => {
-        navigate({
-            pathname: `/${category}`,
-            search: createSearchParams({ sort: sort }).toString()
-        })
+        if (sort) {
+            navigate({
+                pathname: `/${category}`,
+                search: createSearchParams({ sort: sort }).toString()
+            })
+        }
     }, [sort])
     return (
         <div className='w-full'>
+
             {/* Breacrumd */}
             <div className='h-[81px] flex justify-center items-center bg-gray-100'>
                 <div className='w-main'>
@@ -102,6 +96,7 @@ const ListProduct = () => {
             <div className='w-main border p-4 flex justify-between mt-8 m-auto'>
                 <div className='flex flex-col justify-center gap-4'>
                     <span className='font-semibold'>Filter By</span>
+
                     {/* filter */}
                     <div className='w-4/5 flex flex-auto items-center gap-4'>
                         <FilterProduct
@@ -116,6 +111,7 @@ const ListProduct = () => {
                         />
                     </div>
                 </div>
+
                 {/* sort by */}
                 <div className='w-1/5 flex flex-col'>
                     <span className='font-semibold'>Sort By</span>
@@ -128,12 +124,14 @@ const ListProduct = () => {
                     </div>
                 </div>
             </div>
+
+            {/* //show List product */}
             <div className='mt-8 w-main m-auto'>
                 <Mansonry
                     breakpointCols={breakpointColumnsObj}
                     className='flex flex-wrap mx-[-10px]'
                     columnClassName='my-masonry-grid_column mb-[20px]'>
-                    {products?.map((item) => (
+                    {products?.products?.map((item) => (
                         <Product
                             key={item._id}
                             productData={item}
@@ -141,9 +139,16 @@ const ListProduct = () => {
                             normal={true} />
                     ))}
                 </Mansonry>
-            </div>
+            </div >
+            {products?.products?.length > 0 &&
+                <div className='w-main m-auto my-4 flex justify-end'>
+                    <Pagination
+                        totalCount={products?.total}
+                    />
+                </div>}
+
             <div className='w-full h-[500px]'></div>
-        </div>
+        </div >
     )
 }
 

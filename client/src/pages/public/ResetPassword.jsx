@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Button } from '../../components';
 import { useParams } from 'react-router-dom';
-import { apiResetPassword } from '../../apis';
 import { toast } from 'react-toastify';
+import { apiResetPassword } from '../../apis';
+import { Button } from '../../components';
 
 const ResetPassword = () => {
     const [password, setPassword] = useState('');

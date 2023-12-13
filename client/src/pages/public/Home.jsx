@@ -1,17 +1,18 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Banner, BestSeller, CustomSlider, FeatureProduct, HotCollection, SideBar } from '../../components';
+import { Banner, BestSeller, CustomSlider, FeatureProduct, HotCollection, HomeSidebar, DealDaily } from '../../components';
+
 
 const Home = () => {
     const { newProduct } = useSelector(state => state.products);
     const { categories } = useSelector(state => state.app);
-    const { isLoggedIn, current } = useSelector(state => state.user);
+    // const { isLoggedIn, current } = useSelector(state => state.user);
 
     return (
         <div className='mt-6'>
             <div className="w-main flex ">
                 <div className="flex flex-col gap-5 w-[25%] flex-auto">
-                    <SideBar />
+                    <HomeSidebar />
                     {/* <DealDaily /> */}
                 </div>
                 <div className="flex flex-col gap-5 pl-5 w-[75%] flex-auto ">

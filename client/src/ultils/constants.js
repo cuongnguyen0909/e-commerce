@@ -1,5 +1,12 @@
 import icons from "./icons";
 import path from "./path";
+import { RxDashboard } from "react-icons/rx";
+import { GrGroup } from "react-icons/gr";
+import { RiProductHuntLine } from "react-icons/ri";
+import { MdProductionQuantityLimits } from "react-icons/md";
+
+
+const { IoShieldHalf, CiDeliveryTruck, CiGift, MdOutlineReply, MdOutlineTty } = icons;
 
 export const navigation = [
     {
@@ -28,7 +35,6 @@ export const navigation = [
         path: `${path.FAQS}`
     }
 ]
-const { IoShieldHalf, CiDeliveryTruck, CiGift, MdOutlineReply, MdOutlineTty } = icons;
 export const productExtraInfo = [
     {
         id: 1,
@@ -105,10 +111,6 @@ export const productInfoTabs = [
         
         Customers are able to pick the next available delivery day that best fits their schedule. However, to route stops as efficiently as possible, Shopify Shop will provide the time frame. Customers will not be able to choose a time. You will be notified in advance of your scheduled time frame. Please make sure that a responsible adult (18 years or older) will be home at that time.
         In preparation for your delivery, please remove existing furniture, pictures, mirrors, accessories, etc. to prevent damages. Also insure that the area where you would like your furniture placed is clear of any old furniture and any other items that may obstruct the passageway of the delivery team. Shopify Shop will deliver, assemble, and set-up your new furniture purchase and remove all packing materials from your home. Our delivery crews are not permitted to move your existing furniture or other household items. Delivery personnel will attempt to deliver the purchased items in a safe and controlled manner but will not attempt to place furniture if they feel it will result in damage to the product or your home. Delivery personnel are unable to remove doors, hoist furniture or carry furniture up more than 3 flights of stairs. An elevator must be available for deliveries to the 4th floor and above.`
-    },
-    {
-        id: 5,
-        name: 'REVIEWS'
     }
 ]
 
@@ -165,4 +167,61 @@ export const sorts = [
         value: 'created',
         text: 'Date, old to new'
     },
+]
+export const reviewOption = [
+    { id: 1, text: 'Terrible' },
+    { id: 2, text: 'Bad' },
+    { id: 3, text: 'Neutral' },
+    { id: 4, text: 'Good' },
+    { id: 5, text: 'Perfect' },
+]
+
+export const adminSideBar = [
+    {
+        id: 1, type: 'SINGLE', text: 'Dashboard', path: `/${path.ADMIN}/${path.DASHBOARD}`, icon: <RxDashboard />
+    },
+    {
+        id: 2, type: 'SINGLE', text: 'Manage User', path: `/${path.ADMIN}/${path.MANAGE_USER}`, icon: <GrGroup />
+    },
+    {
+        id: 3,
+        type: 'PARENT',
+        text: 'Product',
+        icon: <RiProductHuntLine />,
+        subMenu: [
+            {
+                text: 'Create Product',
+                path: `/${path.ADMIN}/${path.CREATE_PRODUCT}`,
+            },
+            {
+                text: 'Manage Product',
+                path: `/${path.ADMIN}/${path.MANAGE_PRODUCT}`,
+            }
+        ]
+    },
+    {
+        id: 4,
+        type: 'SINGLE',
+        text: 'Manage Order',
+        path: `/${path.ADMIN}/${path.MANAGE_ORDER}`,
+        icon: <MdProductionQuantityLimits />
+    },
+]
+
+export const roles = [
+    {
+        code: 99, value: 'User'
+    },
+    {
+        code: 2002, value: 'Admin'
+    }
+]
+
+export const blockUser = [
+    {
+        code: true, value: 'Blocked'
+    },
+    {
+        code: false, value: 'Active'
+    }
 ]

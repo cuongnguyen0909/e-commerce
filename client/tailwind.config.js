@@ -52,6 +52,16 @@ module.exports = {
                         transform: 'translateX(0px);'
                     }
                 },
+                'scale-up': {
+                    '0%': {
+                        '-webkit-transform': 'scale(0.5)',
+                        transform: 'scale(0.5);',
+                    },
+                    '100%': {
+                        '-webkit-transform': 'scale(1)',
+                        transform: 'scale(1);'
+                    }
+                },
             }
         },
         flex: {
@@ -68,6 +78,7 @@ module.exports = {
             'slide-top': 'slide-top 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both',
             'slide-len': 'slide-len 0.3s linear both',
             'slide-right': 'slide-right 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both',
+            'scale-up': 'scale-up 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both',
 
         }
     },

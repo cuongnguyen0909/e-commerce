@@ -3,7 +3,7 @@ import * as apis from '../../apis';
 
 
 export const getNewProduct = createAsyncThunk('product/newProducts', async (data, { rejectWithValue }) => {
-    const response = await apis.apiGetProducts({ sort: '-createdAt', 'totalRatings[gt]': 3 });
+    const response = await apis.apiGetProducts({ sort: '-createdAt' });
     // console.log(response);
     if (!response.status) {
         return rejectWithValue(response);

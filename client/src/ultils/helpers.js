@@ -13,6 +13,7 @@ export const formatMoney = (number) => {
 export const renderStarFromNumber = (number, size) => {
     if (!Number(number)) return;
     const stars = [];
+    number = Math.round(number);
     if (+number === 0) {
         for (let i = 0; i < 5; i++) {
             stars.push(<FaRegStar color='orange' size={size || 16} />)
@@ -67,4 +68,25 @@ export const validate = (payload, setInvalidFields) => {
     // }
 
     return invalidFields;
+}
+
+export const generateRange = (start, end) => {
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+}
+
+export const getBase64 = (file) => {
+    if (!file) {
+        return Promise.reject(new Error("File is empty or undefined"));
+    }
+
+    if (!(file instanceof File)) {
+        return Promise.reject(new Error("Invalid file object"));
+    }
+
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
 }
