@@ -4,7 +4,14 @@ const { verifyAccessToken } = require('../middlewares/verifyToken');
 const isAdmin = require('../middlewares/isAdmin');
 const uploadImage = require('../config/cloudinary.config');
 
-router.post('/', [verifyAccessToken, isAdmin], productController.createProduct);
+router.post('/', [verifyAccessToken, isAdmin], uploadImage.fields([
+    {
+        name: 'images', maxCount: 10,
+    },
+    {
+        name: 'thumb', maxCount: 1,
+    }
+]), productController.createProduct);
 router.get('/', productController.getProducts);
 router.put('/ratings', verifyAccessToken, productController.ratingProduct);
 router.post('/insertdata', productController.insertData);
@@ -12,7 +19,14 @@ router.post('/insertdata', productController.insertData);
 router.put(
     '/uploadproductimage/:pid',
     [verifyAccessToken, isAdmin],
-    uploadImage.array('images', 10),
+    uploadImage.fields([
+        {
+            name: 'images', maxCount: 10,
+        },
+        {
+            name: 'thumb', maxCount: 1,
+        }
+    ]),
     productController.uploadImageProduct,
 );
 router.put('/:pid', [verifyAccessToken, isAdmin], productController.updateProduct);

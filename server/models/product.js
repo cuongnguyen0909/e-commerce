@@ -32,7 +32,7 @@ var productSchema = new mongoose.Schema(
         },
         quantity: {
             type: Number,
-            default: 0,
+            required: true,
         },
         sold: {
             // so luong hang da ban
@@ -54,6 +54,9 @@ var productSchema = new mongoose.Schema(
                 star: { type: Number },
                 postedBy: { type: mongoose.Types.ObjectId, ref: 'User' },
                 comment: { type: String },
+                updatedAt: {
+                    type: Date,
+                }
             },
         ],
         totalRatings: {

@@ -12,7 +12,7 @@ const verifyAccessToken = asyncHandler(async (req, res, next) => {
             // Nếu có lỗi trong quá trình xác minh token
             if (err) {
                 // In ra dữ liệu được giải mã từ token (có thể là undefined nếu có lỗi)
-                console.log(user);
+                // console.log(user);
                 // Trả về phản hồi lỗi 401 nếu token không hợp lệ
                 return res.status(401).json({
                     status: false,

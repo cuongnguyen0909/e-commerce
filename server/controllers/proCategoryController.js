@@ -52,7 +52,7 @@ const ultils = async (cate) => {
 //INSERT DATA TO DATABASE
 const insertData = asyncHandler(async (req, res) => {
     const promises = [];
-    console.log(typeof data);
+    // console.log(typeof data);
     for (let cate of data) {
         promises.push(ultils(cate));
     }

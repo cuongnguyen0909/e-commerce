@@ -24,16 +24,6 @@
         "image": "https://res.cloudinary.com/dupkxi4xl/image/upload/v1701578960/categories/cate-tablet_jztutr.avif"
     },
     {
-        "cate": "Speaker",
-        "brand": [],
-        "image": "https://res.cloudinary.com/dupkxi4xl/image/upload/v1701578959/categories/cate-accessories_xkqnft.webp"
-    },
-    {
-        "cate": "Camera",
-        "brand": [],
-        "image": "https://res.cloudinary.com/dupkxi4xl/image/upload/v1701578960/categories/cate-smartphone_b5shrq.webp"
-    },
-    {
         "cate": "Laptop",
         "brand": [
             "Asus",

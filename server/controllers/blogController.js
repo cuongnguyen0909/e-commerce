@@ -138,7 +138,7 @@ const getOneBlog = asyncHandler(async (req, res) => {
     const blog = await Blog.findByIdAndUpdate(bid, { $inc: { numberViews: 1 } }, { new: true })
         .populate('likes', 'firstName lastName')
         .populate('disLikes', 'firstName lastName');
-    console.log(blog);
+    // console.log(blog);
     // console.log(blog?.likes?.forEach(item => console.log(item._id)));
     return res.json({
         status: blog ? true : false,

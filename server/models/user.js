@@ -2,6 +2,7 @@ const mongoose = require('mongoose'); // Erase if already required
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 // Declare the Schema of the Mongo model
+// add this inside your route
 var userSchema = new mongoose.Schema(
     {
         firstName: {
@@ -18,6 +19,9 @@ var userSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
+        avatar: {
+            type: String,
+        },
         mobile: {
             type: String,
             unique: true,
@@ -29,7 +33,8 @@ var userSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            default: 'user',
+            enum: [99, 2002],
+            default: 99,
         },
         cart: [
             {

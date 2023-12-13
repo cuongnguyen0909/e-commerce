@@ -5,14 +5,21 @@ const data = require('../../data/data.json');
 
 //CREATE PRODUCT
 const createProduct = asyncHandler(async (req, res) => {
-    if (Object.keys(req.body).length === 0) {
+    const { title, description, brand, category, color } = req.body;
+    const quantity = +req.body.quantity;
+    const price = +req.body.price;
+    const thumb = req.files.thumb[0]?.path;
+    const images = req.files?.images?.map((item) => item.path);
+    if (thumb) {
+        req.body.thumb = thumb;
+    }
+    if (images) {
+        req.body.images = images;
+    }
+    if (!(title || description || brand || category || quantity || color || price || thumb || images)) {
         throw new Error('Missing Input');
     }
-
-    if (req.body && req.body.title) {
-        req.body.slug = slugify(req.body.title);
-    }
-
+    req.body.slug = slugify(title);
     const newProduct = await Product.create(req.body);
     return res.status(200).json({
         status: newProduct ? true : false,
@@ -23,8 +30,8 @@ const createProduct = asyncHandler(async (req, res) => {
 //GET ONE PRODUCT
 const getOneProduct = asyncHandler(async (req, res) => {
     const { pid } = req.params; //api/product/:pid
-    const product = await Product.findById(pid).populate('ratings.postedBy', 'firstName lastName');
-    console.log(product?.ratings?.postedBy);
+    const product = await Product.findById(pid).populate('ratings.postedBy', 'firstName lastName avatar');
+    // console.log(product?.ratings?.postedBy);
     return res.status(200).json({
         status: product ? true : false,
         product: product ? product : 'Can not get product',
@@ -72,6 +79,14 @@ const getProducts = asyncHandler(async (req, res) => {
         const colorArray = query.color?.split(',');
         const colorQuery = colorArray.map(item => ({ color: { $regex: item, $options: 'i' } }));
         colorQueryObject = { $or: colorQuery };
+    }
+    if (req.query.query) {
+        delete formattedQueries.query;
+        formattedQueries['$or'] = [
+            { title: { $regex: req.query.query, $options: 'i' } },
+            { brand: { $regex: req.query.query, $options: 'i' } },
+            { category: { $regex: req.query.query, $options: 'i' } },
+        ]
     }
     const chainQuery = { ...colorQueryObject, ...formattedQueries };
     // console.log(chainQuery)
@@ -140,8 +155,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 //RATINGs PRODUCT
 const ratingProduct = asyncHandler(async (req, res) => {
     const { _id } = req.user;
-
-    const { star, comment, pid } = req.body;
+    const { star, comment, pid, updatedAt } = req.body;
     if (!star || !pid) {
         throw new Error('Missing input');
     }
@@ -152,12 +166,12 @@ const ratingProduct = asyncHandler(async (req, res) => {
         //update lai star va comment
         await Product.updateOne(
             { ratings: { $elemMatch: alreadyRating } },
-            { $set: { 'ratings.$.star': star, 'ratings.$.comment': comment } },
+            { $set: { 'ratings.$.star': star, 'ratings.$.comment': comment, 'ratings.$.updatedAt': updatedAt } },
             { new: true },
         );
     } else {
         //add new start and comment
-        await Product.findByIdAndUpdate(pid, { $push: { ratings: { star, comment, postedBy: _id } } }, { new: true });
+        await Product.findByIdAndUpdate(pid, { $push: { ratings: { star, comment, postedBy: _id, updatedAt } } }, { new: true });
         // console.log({ response });
     }
     //sum ratings
@@ -198,19 +212,18 @@ const ultils = async (product) => {
     let price = Math.round(Number(product?.price?.match(/\d/g).join('')) / 100);
 
     // Kiểm tra nếu category là laptop
-    if (product?.category[1] === 'laptop') {
+    if (product?.category[1] === 'Laptop') {
         // Đảm bảo giá lớn hơn 10.000.000
         price = Math.max(price, 10000000);
         // Đảm bảo giá không bé hơn 500.000
         price = Math.max(price, 500000);
     }
-
-    // Tính toán số lượng 5 sao
-    const totalRatings = Math.round(Math.random() * 5);
-    const totalProducts = await Product.countDocuments(); // Đếm tổng số lượng sản phẩm trong cơ sở dữ liệu
-
-    // Đảm bảo số lượng 5 sao nhiều hơn 60% tổng số lượng sản phẩm
-    const fiveStarCount = Math.max(Math.round(totalProducts * 0.6), totalRatings);
+    if (product?.category[1] === 'Smartphone') {
+        // Đảm bảo giá lớn hơn 10.000.000
+        price = Math.max(price, 6000000);
+        // Đảm bảo giá không bé hơn 500.000
+        price = Math.max(price, 2000000);
+    }
 
     await Product.create({
         title: product?.name,
@@ -224,7 +237,7 @@ const ultils = async (product) => {
         images: product?.images,
         color: product?.variants?.find((item) => item.label === 'Color')?.variants[0],
         thumb: product?.thumb,
-        totalRatings: fiveStarCount, // Sử dụng số lượng 5 sao tính toán
+        totalRatings: 0, // Sử dụng số lượng 5 sao tính toán
     });
 };
 
