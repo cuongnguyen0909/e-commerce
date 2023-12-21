@@ -1,14 +1,29 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import logo from '../../assets/logo.png';
 import icons from '../../ultils/icons';
 import { Link } from 'react-router-dom';
 import path from '../../ultils/path';
-import { useSelector } from 'react-redux/es/hooks/useSelector';
+import { useSelector, useDispatch } from 'react-redux';
 import { Fragment } from 'react';
+import { logout } from '../../store/user/userSlice'
 const { MdLocalPhone, MdMarkEmailRead, HiOutlineShoppingCart, FaUserShield } = icons;
 const Header = () => {
+    const dispatch = useDispatch();
     const { isLoggedIn, current } = useSelector(state => state.user);
     // console.log(current?.role)
+    const [isShowOption, setIsShowOption] = useState(false);
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            const profile = document.getElementById('profile');
+            if (!profile?.contains(e.target)) {
+                setIsShowOption(false);
+            }
+        }
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        }
+    }, [])
     return (
         <div className=" w-main flex justify-between h-[110px] py-[35px]">
             <Link to={`/${path.HOME}`}>
@@ -34,11 +49,31 @@ const Header = () => {
                         <HiOutlineShoppingCart color="red" />
                         <span>0 items</span>
                     </div>
-                    <Link to={+current?.role === 2002 ? `/${path.ADMIN}/${path.DASHBOARD}` : `/${path.MEMBER}/${path.PERSONAL}`}
-                        className="flex items-center px-6 border-r justify-center gap-2 cursor-pointer">
+                    <div
+                        className="flex items-center px-6 border-r justify-center gap-2 cursor-pointer relative"
+                        onClick={() => setIsShowOption(prev => !prev)}
+                        id='profile'
+                    >
                         <FaUserShield color='red' />
-                        <span>profile</span>
-                    </Link>
+                        <span>Account</span>
+                        {isShowOption &&
+                            <div className='absolute top-full flex flex-col z-50 left-[16px] bg-gray-100 border min-w-[150px] py-2'
+                                onClick={e => e.stopPropagation()}>
+                                <Link
+                                    className='p-2 hover:bg-gray-200 w-full'
+                                    to={`/${path.MEMBER}/${path.PERSONAL}`}>
+                                    Personal
+                                </Link>
+                                {+current.role === 2002 &&
+                                    <Link className='p-2 hover:bg-gray-200 w-full'
+                                        to={`/${path.ADMIN}/${path.DASHBOARD}`}>
+                                        Admin Workspace
+                                    </Link>}
+                                <span
+                                    onClick={() => dispatch(logout())}
+                                    className='p-2 hover:bg-gray-200 w-full'>Logout</span>
+                            </div>}
+                    </div>
                 </Fragment>}
             </div>
         </div>

@@ -3,16 +3,16 @@ const asyncHandler = require('express-async-handler');
 const data = require('../../data/cate_brand.json');
 //CREATE PRODUCT CATEGORY
 const createProductCategory = asyncHandler(async (req, res) => {
-    if (Object.keys(req.body).length === 0) {
+    const { title, brand } = req.body;
+
+    const image = req.files.thumb[0]?.path;
+    if (!(title || brand || images)) {
         throw new Error('Missing Input');
     }
-    if (Object.keys(req.body).length === 0) {
-        throw new Error('Missing Input');
-    }
-    const newProductCategory = await ProductCategory.create(req.body);
+    const newCategory = await ProductCategory.create(req.body);
     return res.json({
-        status: newProductCategory ? true : false,
-        createdProductCategory: newProductCategory ? newProductCategory : 'Can not create new Product Category',
+        status: newCategory ? true : false,
+        createdCategory: newCategory ? newCategory : 'Can not create new Product Category',
     });
 });
 //GET ALL PRODUCT CATEGORY

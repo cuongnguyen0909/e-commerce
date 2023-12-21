@@ -9,7 +9,7 @@ const FeatureProduct = () => {
     const [products, setProducts] = useState([]);
     const fetchProducts = async () => {
         try {
-            const response = await apiGetProducts({ limit: 9, 'totalRatings[gt]': 3, 'price[gt]': 1000000 })
+            const response = await apiGetProducts({ limit: 9, sort: '-totalRatings', 'price[gt]': 1000000 })
             // console.log(response);
             if (response?.status) {
                 // console.log(response);

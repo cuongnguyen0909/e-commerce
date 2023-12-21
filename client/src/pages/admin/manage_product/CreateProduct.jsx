@@ -65,7 +65,6 @@ const CreateProduct = () => {
     useEffect(() => {
         handlePreviewImages(watch('images'));
     }, [watch('images')])
-    // console.log(preview)
 
     //define function handleCreateProduct to create new product 
     const handleCreateProduct = async (data) => {
@@ -86,7 +85,6 @@ const CreateProduct = () => {
                 if (finalPayload.images) {
                     for (let image of finalPayload.images) {
                         formData.append('images', image)
-
                     }
                 }
 

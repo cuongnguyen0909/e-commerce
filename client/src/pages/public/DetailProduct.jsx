@@ -8,6 +8,7 @@ import { formatMoney, renderStarFromNumber } from '../../ultils/helpers';
 import { productExtraInfo } from '../../ultils/constants';
 import { apiGetProducts } from '../../apis/product';
 import DomPurify from 'dompurify';
+import clsx from 'clsx';
 const settings = {
     dots: false,
     infinite: false,
@@ -17,12 +18,42 @@ const settings = {
 };
 
 const DetailProduct = () => {
-    const { pid, title, category } = useParams();
+    const { pid, category } = useParams();
     const [productData, setProductData] = useState(null);
     const [relatedProduct, setRelatedProduct] = useState(null)
     const [quantity, setQuantity] = useState(1);
     const [currentImage, setCurrentImage] = useState(null);
     const [update, setUpdate] = useState(false);
+    const [varriants, setVarriants] = useState(null);
+    const [currentProduct, setCurrentProduct] = useState({
+        title: '',
+        thumb: '',
+        images: [],
+        price: 0,
+        quantity: 0,
+        color: '',
+    });
+    useEffect(() => {
+        if (varriants) {
+            setCurrentProduct({
+                title: productData?.varriants?.find(item => item.sku === varriants)?.title,
+                thumb: productData?.varriants?.find(item => item.sku === varriants)?.thumb,
+                images: productData?.varriants?.find(item => item.sku === varriants)?.images,
+                price: productData?.varriants?.find(item => item.sku === varriants)?.price,
+                quantity: productData?.varriants?.find(item => item.sku === varriants)?.quantity,
+                color: productData?.varriants?.find(item => item.sku === varriants)?.color,
+            })
+        } else {
+            setCurrentProduct({
+                title: productData?.title,
+                thumb: productData?.thumb,
+                images: productData?.images,
+                price: productData?.price,
+                quantity: productData?.quantity,
+                color: productData?.color,
+            })
+        }
+    }, [varriants])
     // define function fetchProductData
     const fetchProductData = async () => {
         const response = await apiGetOneProduct(pid);
@@ -68,14 +99,15 @@ const DetailProduct = () => {
     const reRender = useCallback(() => {
         setUpdate(!update);
     }, [update])
+    // console.log(productData)
     return (
         <div className='w-full gap-2'>
 
             {/* Breacrumd */}
             <div className='h-[81px] flex justify-center items-center bg-gray-100'>
                 <div className='w-main'>
-                    <h3 className='font-semibold'>{title}</h3>
-                    <Breadcrumb title={title} category={category} />
+                    <h3 className='font-semibold'>{currentProduct?.title || productData?.title}</h3>
+                    <Breadcrumb title={currentProduct?.title || productData?.title} category={category} />
                 </div>
             </div>
 
@@ -89,10 +121,10 @@ const DetailProduct = () => {
                             smallImage: {
                                 alt: productData?.title,
                                 isFluidWidth: true,
-                                src: currentImage,
+                                src: currentProduct?.thumb || currentImage,
                             },
                             largeImage: {
-                                src: currentImage,
+                                src: currentProduct?.thumb || currentImage,
                                 width: 1800,
                                 height: 1500
                             }
@@ -102,11 +134,20 @@ const DetailProduct = () => {
                     {/* Image Slider */}
                     <div className='w-[458px]'>
                         <Slider {...settings} className='image-slider flex gap-2 justify-between'>
-                            {productData?.images.map((item, index) => (
-                                <div className='w-full'>
+                            {!varriants && productData?.images?.map((item, index) => (
+                                <div className='w-full' key={index}>
                                     <img
                                         onClick={e => handleClickImage(e, item)}
-                                        src={item} alt={productData?.title}
+                                        src={item} alt={item?.title}
+                                        className='object-contain border h-[143px] w-[143px] cursor-pointer' />
+                                </div>
+                            ))}
+                            {varriants && currentProduct?.images?.map((item, index) => (
+                                <div className='w-full'
+                                    key={index}>
+                                    <img
+                                        onClick={e => handleClickImage(e, item)}
+                                        src={item} alt={item?.title}
                                         className='object-contain border h-[143px] w-[143px] cursor-pointer' />
                                 </div>
                             ))}
@@ -117,7 +158,7 @@ const DetailProduct = () => {
                 {/* Product Info: price, description */}
                 <div className='w-2/5 h-[458px] flex flex-col gap-4'>
                     <h2 className='text-[30px] font-semibold'>
-                        {`${formatMoney(productData?.price)} VND`}
+                        {`${formatMoney(currentProduct?.price || productData?.price)} VND`}
                     </h2>
                     <div className='flex items-center mt-4 gap-2'>
                         <div className='flex'>
@@ -142,7 +183,32 @@ const DetailProduct = () => {
                                 dangerouslySetInnerHTML={{ __html: DomPurify.sanitize(productData?.description[0]) }}>
                             </div>}
                     </ul>
-
+                    <div className='my-4 items-center gap-4'>
+                        <span className='font-bold'>Color</span>
+                        <div className='flex flex-wrap gap-4 items-center w-full'>
+                            <div
+                                onClick={() => setVarriants(null)}
+                                className={clsx('flex items-center gap-2 p-2 border cursor-pointer', !varriants && 'border-red-500')}>
+                                <img src={productData?.thumb} alt="thumb" className='w-8 h-8 rounded-md object-cover' />
+                                <span className='flex flex-col'>
+                                    <span>{productData?.color}</span>
+                                    <span className='text-xs'>{`${formatMoney(productData?.price)} VND`}</span>
+                                </span>
+                            </div>
+                            {productData?.varriants?.map((item, index) => (
+                                <div
+                                    key={index}
+                                    onClick={() => setVarriants(item.sku)}
+                                    className={clsx('flex items-center gap-2 p-2 border cursor-pointer', varriants === item.sku && 'border-red-500')}>
+                                    <img src={item?.thumb} alt="thumb" className='w-8 h-8 rounded-md object-cover' />
+                                    <span className='flex flex-col'>
+                                        <span>{item?.color}</span>
+                                        <span className='text-xs'>{`${formatMoney(item?.price)} VND`}</span>
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                     {/* Quantity */}
                     <div className='flex flex-col gap-8'>
                         <div className='flex items-center gap-4'>

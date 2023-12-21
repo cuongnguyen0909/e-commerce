@@ -13,14 +13,15 @@ const InputHookForm = ({
     placeholder,
     fullwidth,
     defaultValue,
-    style
+    style,
+    readOnly
 }) => {
     return (
         <div className={clsx('flex flex-col h-[78px] gap-2', style)}>
             {label && (
                 <label
                     htmlFor={id}
-                    className='text-left w-full'
+                    className='text-left w-full font-semibold'
                 >
                     {label}
                 </label>
@@ -33,6 +34,7 @@ const InputHookForm = ({
                 disabled={disabled}
                 placeholder={placeholder}
                 className={clsx('form-input', fullwidth && 'w-full', style)}
+                readOnly={readOnly}
             />
             {errors[id] && (
                 <small className="text-xs text-red-500">{errors[id]?.message}</small>

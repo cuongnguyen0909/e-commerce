@@ -4,6 +4,7 @@ import { RxDashboard } from "react-icons/rx";
 import { GrGroup } from "react-icons/gr";
 import { RiProductHuntLine } from "react-icons/ri";
 import { MdProductionQuantityLimits } from "react-icons/md";
+import { TbBrandReactNative } from "react-icons/tb";
 
 
 const { IoShieldHalf, CiDeliveryTruck, CiGift, MdOutlineReply, MdOutlineTty } = icons;
@@ -199,13 +200,36 @@ export const adminSideBar = [
             }
         ]
     },
+    ,
     {
         id: 4,
+        type: 'SINGLE',
+        text: 'Manage Category',
+        path: `/${path.ADMIN}/${path.MANAGE_CATEGORY}`,
+        icon: <TbBrandReactNative />
+    },
+    {
+        id: 5,
         type: 'SINGLE',
         text: 'Manage Order',
         path: `/${path.ADMIN}/${path.MANAGE_ORDER}`,
         icon: <MdProductionQuantityLimits />
     },
+]
+export const memberSideBar = [
+    {
+        id: 1, type: 'SINGLE', text: 'Personal', path: `/${path.MEMBER}/${path.PERSONAL}`, icon: <RxDashboard />
+    },
+    {
+        id: 2, type: 'SINGLE', text: 'My cart', path: `/${path.MEMBER}/${path.MY_CART}`, icon: <GrGroup />
+    },
+    {
+        id: 3, type: 'SINGLE', text: 'Purchase history', path: `/${path.MEMBER}/${path.PURCHASE_HISTORY}`, icon: <GrGroup />
+    },
+    {
+        id: 4, type: 'SINGLE', text: 'Wishlist', path: `/${path.MEMBER}/${path.WISHLIST}`, icon: <GrGroup />
+    }
+
 ]
 
 export const roles = [

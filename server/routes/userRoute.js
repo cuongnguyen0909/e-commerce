@@ -2,6 +2,8 @@ const router = require('express').Router();
 const userController = require('../controllers/userController');
 const { verifyAccessToken } = require('../middlewares/verifyToken');
 const isAdmin = require('../middlewares/isAdmin');
+const uploadImage = require('../config/cloudinary.config');
+
 
 router.post('/register', userController.registerUser);
 router.put('/finalregister/:token', userController.finalRegister);
@@ -16,8 +18,7 @@ router.put('/resetpassword', userController.resetPassword);
 router.put('/address', verifyAccessToken, userController.updateAddress);
 router.delete('/delete/:uid', [verifyAccessToken, isAdmin], userController.deleteUser);
 router.put('/cart', verifyAccessToken, userController.updateCart);
-
-router.put('/current', verifyAccessToken, userController.updateUser);
-router.put('/:uid', [verifyAccessToken, isAdmin], userController.updateUserByAdmin);
+router.put('/current', verifyAccessToken, uploadImage.single("avatar"), userController.updateUser);
+router.put('/:uid', verifyAccessToken, isAdmin, userController.updateUserByAdmin);
 
 module.exports = router;

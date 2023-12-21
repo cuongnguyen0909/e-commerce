@@ -9,8 +9,8 @@ const usePagination = (totalProductCount, currentPage, siblingCount = 1) => {
     //currentPage la trang hien tai
 
     const paginationArray = useMemo(() => {
-        const pageSize = process.env.REACt_APP_LIMIT || 10;
-        const paginationCount = Math.ceil(totalProductCount / pageSize);
+        const pageSize = +process.env.REACt_APP_LIMIT || 10;
+        const paginationCount = Math.ceil(+totalProductCount / pageSize);
         const totalPaginationItem = siblingCount + 5;
 
         if (paginationCount <= totalPaginationItem) return generateRange(1, paginationCount);
@@ -18,7 +18,7 @@ const usePagination = (totalProductCount, currentPage, siblingCount = 1) => {
         //isShowleft la trang hien tai lon hon 2 + so luong pagination item o 2 ben trai
         //ishowright la trang hien tai nho hon tong so luong pagination - 2 - so luong pagination item o 2 ben phai
         const isShowLeft = currentPage > siblingCount + 2;
-        const isShowRight = currentPage < paginationCount - siblingCount - 1;
+        const isShowRight = currentPage + siblingCount < paginationCount - 1;
 
         if (isShowLeft && !isShowRight) {
             const rightStart = paginationCount - 4;
@@ -35,9 +35,10 @@ const usePagination = (totalProductCount, currentPage, siblingCount = 1) => {
 
         const siblingLeft = Math.max(currentPage - siblingCount, 1);
         const siblingRight = Math.min(currentPage + siblingCount, paginationCount);
+
         if (isShowLeft && isShowRight) {
             const middleRange = generateRange(siblingLeft, siblingRight);
-            return [1, <BiDotsHorizontalRounded />, ...middleRange, '...', paginationCount]
+            return [1, <BiDotsHorizontalRounded />, ...middleRange, <BiDotsHorizontalRounded />, paginationCount]
         }
 
     }, [totalProductCount, currentPage, siblingCount])

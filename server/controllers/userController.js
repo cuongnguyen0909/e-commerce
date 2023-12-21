@@ -5,29 +5,7 @@ const jwt = require('jsonwebtoken');
 const sendMail = require('../ultils/sendMail');
 const crypto = require('crypto');
 const makeToken = require('uniqid');
-// const user = require('../models/user');
-//api register
-//asyncHandler co cong dung hung nhung cai error va next toi thang tiep theo
-// const registerUser = asyncHandler(async (req, res) => {
-//     const { email, password, firstName, lastName } = req.body;
-//     if (!email || !password || !firstName || !lastName) {
-//         return res.status(400).json({
-//             status: false,
-//             message: 'Missing input.',
-//         });
-//     }
-//     const user = await User.findOne({ email }); //{email: email}
-//     if (user) throw new Error(`Email ${user.email} already existed!`);
-//     else {
-//         const newUser = await User.create(req.body);
-//         return res.status(200).json({
-//             status: newUser ? true : false,
-//             message: newUser
-//                 ? `Create ${newUser.email} statusfully. Please login`
-//                 : 'Something went wrong. Please check again.',
-//         });
-//     }
-// });
+
 const registerUser = asyncHandler(async (req, res) => {
     const { email, password, firstName, lastName, mobile } = req.body;
     if (!email || !password || !firstName || !lastName || !mobile) {
@@ -135,16 +113,21 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 //UPDATE USER
 const updateUser = asyncHandler(async (req, res) => {
+    console.log(req.file)
     const { _id } = req.user;
+    const { firstName, lastName, email, mobile } = req.body;
+    if (req.file) {
+        req.body.avatar = req.file.path;
+    }
     // khong cho nguoi dung tu sua role
-    const { password, role, refreshToken, ...userData } = req.body;
-    if (!_id || Object.keys(userData).length === 0) throw new Error('Missing Input');
-    const response = await User.findByIdAndUpdate(_id, userData, {
-        new: true,
-    }).select('-refreshToken -password -role'); //ham nay no van tra ve data user da xoa
+    if (!_id || Object.keys(req.body).length === 0) throw new Error('Missing Input');
+    const response = await User.findByIdAndUpdate(_id,
+        {
+            firstName, lastName, email, mobile, avatar: req.body.avatar,
+        }, { new: true, }).select('-refreshToken -password -role');
     return res.status(200).json({
         status: response ? true : false,
-        updatedUser: response ? response : 'Can not update user!',
+        message: response ? 'Updated information successfully' : 'Can not update profile!',
     });
 });
 //UPDATE USER BY ADMIN
@@ -255,7 +238,6 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     if (!cookie && !cookie['refreshToken']) {
         throw new Error('No refresh token in Cookie');
     }
-
     const result = await jwt.verify(cookie.refreshToken, process.env.JWT_SECRET);
     console.log(result);
     const user = await User.findOne({
@@ -350,7 +332,7 @@ const resetPassword = asyncHandler(async (req, res) => {
     await user.save();
     return res.status(200).json({
         status: user ? true : false,
-        message: user ? 'Updated password statusfully' : 'Something went wrong!',
+        message: user ? 'Updated password successfully' : 'Something went wrong!',
     });
 });
 

@@ -129,15 +129,18 @@ const Login = () => {
         setVerifyEmail(false);
         setToken('');
     }
+
     return (
         <div className='w-screen h-screen relative'>
             {/* verify email */}
             {verifyEmail &&
-                <div className='flex flex-col justify-center items-center absolute top-[-400px] bottom-0 left-0 right-0 backdrop-brightness-50 z-50'>
-                    <div className='bg-white w-[500px] rounded-md p-8 flex flex-col'
+                <div className='flex flex-col justify-center items-center absolute top-[-400px] bottom-0 left-0 right-0 backdrop-brightness-50 z-50'
+                >
+                    <div className='bg-white w-[500px] rounded-md p-8 flex flex-col relative'
                     >
-                        <div className='flex flex-col justify-center'>
-                            <IoMdCloseCircleOutline className=' cursor-pointer flex justify-end' onClick={handleCancelVerify} />
+                        <div className='flex flex-col justify-center'
+                        >
+                            <IoMdCloseCircleOutline size={24} color='red' className='cursor-pointer absolute top-[8px] right-[16px]' onClick={handleCancelVerify} />
                             <h4>We sent a code to your email. Please enter the code below to verify your email.</h4>
                             <span className='text-[12px] font-semibold text-red-700'>
                                 Don't share this code with anyone else.
@@ -182,7 +185,8 @@ const Login = () => {
             <img src={background_login} alt="" className='h-full w-full object-cover' />
             <div className='absolute top-0 bottom-0 lefy-0 right-1/3 items-center justify-center flex'>
                 <Link to={`/${path.HOME}`} className='text-blue-500 hover:underline cursor-pointer text-[14px] m-auto'>
-                    <TiHomeOutline className={`text-[25px] text-gray-700 hover:text-red-700 ${!isRegister ? 'absolute top-[220px] left-[20px]' : 'absolute top-[150px] left-[20px]'}`} />
+                    <TiHomeOutline className={`text-[25px] text-gray-700 hover:text-red-700 
+                    ${!isRegister ? 'absolute top-[220px] left-[20px]' : 'absolute top-[150px] left-[20px]'}`} />
                 </Link>
                 <div className='p-8 bg-white flex flex-col items-center rounded-md min-w-[500px] '>
                     <div className='flex items-center'>

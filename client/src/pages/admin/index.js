@@ -4,4 +4,6 @@ export { default as ManageOrder } from './manage_order/ManageOrder';
 export { default as ManageProduct } from './manage_product/ManageProduct';
 export { default as ManageUser } from './manage_user/ManageUser';
 export { default as CreateProduct } from './manage_product/CreateProduct';
-
+export { default as UpdateProduct } from './manage_product/UpdateProduct'
+export { default as ManageCategory } from './manage_category/ManageCategory'
+export { default as CustomVarriant } from './manage_product/CustomVarriant'

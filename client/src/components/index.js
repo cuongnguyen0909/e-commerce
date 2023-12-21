@@ -32,3 +32,4 @@ export { default as AdminSidebar } from './sidebar/admin/AdminSidebar';
 export { default as InputHookForm } from './inputs/InputHookForm';
 export { default as SelectHookForm } from './inputs/SelectHookForm';
 export { default as MarkdownEditor } from './inputs/MarkdownEditor';
+export { default as MemberSidebar } from './sidebar/member/MemberSidebar';

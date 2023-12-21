@@ -9,7 +9,7 @@ import useDebounce from '../../custom_hook/useDebounce';
 
 const { IoChevronDown } = icons;
 
-const FilterProduct = ({ name, activeClick, changeActiveFilter, type = 'checkbox' }) => {
+const FilterProduct = ({ name, activeClick, changeActiveFilter, type = 'checkbox', brands, colors }) => {
     //take params from url 
     const { category } = useParams();
     //define navigate 
@@ -21,19 +21,29 @@ const FilterProduct = ({ name, activeClick, changeActiveFilter, type = 'checkbox
     })
 
     //define selected color 
-    const [selected, setSelected] = useState([]);
+    const [colorSelected, setColorSelected] = useState([]);
+    const [brandsSelected, setBrandsSelected] = useState([]);
 
     const [params] = useSearchParams();
     //define highest price
     const [highestPrice, setHighestPrice] = useState(null);
 
     //define function handle click input 
-    const handleClickInput = (e) => {
-        const alreadySelected = selected.find(item => item === e.target.value);
+    const handleClickInputColor = (e) => {
+        const alreadySelected = colorSelected.find(item => item === e.target.value);
         if (alreadySelected) {
-            setSelected(prev => prev.filter(item => item !== e.target.value))
+            setColorSelected(prev => prev.filter(item => item !== e.target.value))
         } else {
-            setSelected(prev => [...prev, e.target.value])
+            setColorSelected(prev => [...prev, e.target.value])
+        }
+        changeActiveFilter(null);
+    }
+    const handleClickInputBrand = (e) => {
+        const alreadySelected = brandsSelected.find(item => item === e.target.value);
+        if (alreadySelected) {
+            setBrandsSelected(prev => prev.filter(item => item !== e.target.value))
+        } else {
+            setBrandsSelected(prev => [...prev, e.target.value])
         }
         changeActiveFilter(null);
     }
@@ -63,21 +73,9 @@ const FilterProduct = ({ name, activeClick, changeActiveFilter, type = 'checkbox
     //define useEffect for filter by color
     useEffect(() => {
         const queries = Object.fromEntries([...params]);
-        if (selected.length > 0) {
-            queries.color = selected.join(',')
+        if (colorSelected.length > 0) {
+            queries.color = colorSelected.join(',')
             queries.page = 1;
-
-            // if (Number(priceFilter.from > 0)) {
-            //     queries.from = priceFilter.from;
-            // }
-            // if (Number(priceFilter.to > 0)) {
-            //     queries.to = priceFilter.to;
-            // }
-
-            // navigate({
-            //     pathname: `/${category}`,
-            //     search: createSearchParams(queries).toString()
-            // })
         } else {
             delete queries.color;
         }
@@ -85,7 +83,20 @@ const FilterProduct = ({ name, activeClick, changeActiveFilter, type = 'checkbox
             pathname: `/${category}`,
             search: createSearchParams(queries).toString()
         })
-    }, [selected])
+    }, [colorSelected])
+    useEffect(() => {
+        const queries = Object.fromEntries([...params]);
+        if (brandsSelected.length > 0) {
+            queries.brand = brandsSelected.join(',',)
+            queries.page = 1;
+        } else {
+            delete queries.brand;
+        }
+        navigate({
+            pathname: `/${category}`,
+            search: createSearchParams(queries).toString()
+        })
+    }, [brandsSelected])
     //define debounce price filter 
     const debouncePriceFrom = useDebounce(priceFilter.from, 500);
     const debouncePriceTo = useDebounce(priceFilter.to, 500);
@@ -123,14 +134,14 @@ const FilterProduct = ({ name, activeClick, changeActiveFilter, type = 'checkbox
             <span >{name}</span>
             <IoChevronDown />
             {activeClick === name && <div className='absolute z-10 top-[calc(100%+1px)] left-0 w-fit p-4 border bg-white min-w-[150px] '>
-                {type === 'checkbox' &&
+                {colors && type === 'checkbox' &&
                     <div onClick={e => e.stopPropagation()}>
                         <div className='p-4 items-center flex justify-between gap-8 border-b'>
-                            <span className='whitespace-nowrap'>{`${selected.length} selected`}</span>
+                            <span className='whitespace-nowrap'>{`${colorSelected.length} selected`}</span>
                             <span className='cursor-pointer underline hover:text-main'
                                 onClick={e => {
                                     e.stopPropagation();
-                                    setSelected([])
+                                    setColorSelected([])
                                 }}>
                                 Reset</span>
                         </div>
@@ -144,8 +155,36 @@ const FilterProduct = ({ name, activeClick, changeActiveFilter, type = 'checkbox
                                         name={item}
                                         className='w-4 h-4'
                                         value={item}
-                                        onChange={handleClickInput}
-                                        checked={selected.length === 0 ? false : selected.find(i => i === item)}
+                                        onChange={handleClickInputColor}
+                                        checked={colorSelected.length === 1 ? false : colorSelected.find(i => i === item)}
+                                    />
+                                    <label className='capitalize text-gray-700' htmlFor={item}>{item}</label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>}
+                {brands && type === 'checkbox' &&
+                    <div onClick={e => e.stopPropagation()}>
+                        <div className='p-4 items-center flex justify-center gap-8 border-b'>
+                            <span className='cursor-pointer underline hover:text-main'
+                                onClick={e => {
+                                    e.stopPropagation();
+                                    setBrandsSelected([])
+                                }}>
+                                Reset</span>
+                        </div>
+                        <div onClick={e => e.stopPropagation()} className='flex-col flex gap-3 mt-4'>
+                            {brands?.map((item, index) => (
+                                <div className='flex items-center gap-4'>
+                                    <input
+                                        type='checkbox'
+                                        id={item}
+                                        key={index}
+                                        name={item}
+                                        className='w-4 h-4'
+                                        value={item}
+                                        onChange={handleClickInputBrand}
+                                        checked={brandsSelected.length === 0 ? false : brandsSelected.find(i => i === item)}
                                     />
                                     <label className='capitalize text-gray-700' htmlFor={item}>{item}</label>
                                 </div>

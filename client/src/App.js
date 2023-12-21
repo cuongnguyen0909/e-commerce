@@ -5,8 +5,8 @@ import {
     ListProduct, FinalRegister, ResetPassword, ShowProductSearch
 } from './pages/public';
 
-import { AdminLayout, Dashboard, ManageOrder, ManageProduct, ManageUser, CreateProduct } from './pages/admin';
-import { MemberLayout, Personal } from './pages/member';
+import { AdminLayout, Dashboard, ManageOrder, ManageProduct, ManageUser, CreateProduct, ManageCategory } from './pages/admin';
+import { MemberLayout, Personal, PurchaseHistory, Cart, Wishlist } from './pages/member';
 import path from './ultils/path';
 import { getCategories } from './store/app/appAction';
 import { useDispatch, useSelector } from 'react-redux';
@@ -42,10 +42,15 @@ function App() {
                     <Route path={path.MANAGE_USER} element={<ManageUser />} />
                     <Route path={path.CREATE_PRODUCT} element={<CreateProduct />} />
                     <Route path={path.MANAGE_PRODUCT} element={<ManageProduct />} />
+                    <Route path={path.MANAGE_CATEGORY} element={<ManageCategory />} />
                     <Route path={path.MANAGE_ORDER} element={<ManageOrder />} />
                 </Route>
+                {/* //member */}
                 <Route path={path.MEMBER} element={<MemberLayout />}>
                     <Route path={path.PERSONAL} element={<Personal />} />
+                    <Route path={path.MY_CART} element={<Cart />} />
+                    <Route path={path.PURCHASE_HISTORY} element={<PurchaseHistory />} />
+                    <Route path={path.WISHLIST} element={<Wishlist />} />
                 </Route>
                 <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
                 <Route path={path.LOGIN} element={<Login />} />

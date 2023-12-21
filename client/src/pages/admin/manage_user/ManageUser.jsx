@@ -9,6 +9,11 @@ import { set, useForm } from 'react-hook-form';
 import { render } from 'react-dom';
 import { toast } from 'react-toastify'
 import Swal from 'sweetalert2';
+import { FaPen } from "react-icons/fa";
+import { IoIosRemoveCircle } from "react-icons/io";
+import { FaBackspace } from "react-icons/fa";
+
+
 const ManageUser = () => {
     //define state to store data from api
     const [usersData, setUsersData] = useState(null)
@@ -131,7 +136,7 @@ const ManageUser = () => {
                                 <th className='text-left px-4 py-2'>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody className=''>
                             {usersData?.users?.map((item, index) => (
                                 <tr key={item?._id} className='border border-gray-400 text-[14px]'>
                                     <td className='py-2 px-4'>{index + 1}</td>
@@ -225,20 +230,20 @@ const ManageUser = () => {
                                             </span>}
                                     </td>
                                     <td className='py-2 px-4'>{moment(item?.createdAt).format('DD/MM/YYYY')}</td>
-                                    <td className='py-2 px-4'>
+                                    <td className='py-2 px-4 flex justify-center items-center'>
                                         {editUser?._id === item._id
                                             ? <span
                                                 onClick={() => setEditUser(null)}
-                                                className='px-2 text-orange-600 hover:underline cursor-pointer'>
-                                                Back</span>
+                                                className='px-2 text-orange-600 hover:underline inline-block cursor-pointer'>
+                                                <FaBackspace size={20} /></span>
                                             : <span
                                                 onClick={() => setEditUser(item)}
-                                                className='px-2 text-orange-600 hover:underline cursor-pointer'>
-                                                Edit</span>}
+                                                className='px-2 text-orange-600 hover:underline inline-block cursor-pointer'>
+                                                <FaPen size={20} /></span>}
                                         <span
                                             onClick={() => handleDeleteUser(item._id)}
-                                            className='px-2 text-orange-600 hover:underline cursor-pointer'>
-                                            Delete</span>
+                                            className='px-2 text-orange-600 hover:underline inline-block cursor-pointer'>
+                                            <IoIosRemoveCircle size={20} /></span>
                                     </td>
                                 </tr>
                             ))}

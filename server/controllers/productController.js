@@ -2,7 +2,7 @@ const Product = require('../models/product');
 const asyncHandler = require('express-async-handler');
 const slugify = require('slugify');
 const data = require('../../data/data.json');
-
+const makeSKU = require('uniqid');
 //CREATE PRODUCT
 const createProduct = asyncHandler(async (req, res) => {
     const { title, description, brand, category, color } = req.body;
@@ -80,14 +80,31 @@ const getProducts = asyncHandler(async (req, res) => {
         const colorQuery = colorArray.map(item => ({ color: { $regex: item, $options: 'i' } }));
         colorQueryObject = { $or: colorQuery };
     }
+
+    // if (query?.brand) {
+    //     delete formattedQueries.brand;
+    //     const brandArray = query.brand?.split(',');
+    //     const brandQuery = brandArray.map(item => ({ brand: { $regex: item, $options: 'i' } }));
+    //     brandQueryObject = { $or: brandQuery };
+    // }
+
+    // let queryObject = {};
     if (req.query.query) {
         delete formattedQueries.query;
         formattedQueries['$or'] = [
-            { title: { $regex: req.query.query, $options: 'i' } },
-            { brand: { $regex: req.query.query, $options: 'i' } },
-            { category: { $regex: req.query.query, $options: 'i' } },
+            { title: { $regex: query.query, $options: 'i' } },
+            { brand: { $regex: query.query, $options: 'i' } },
+            { category: { $regex: query.query, $options: 'i' } },
         ]
     }
+    // queryObject = {
+    //     $or: [
+    //         { title: { $regex: query.query, $options: 'i' } },
+    //         { brand: { $regex: query.query, $options: 'i' } },
+    //         { category: { $regex: query.query, $options: 'i' } },
+    //     ]
+    // }
+
     const chainQuery = { ...colorQueryObject, ...formattedQueries };
     // console.log(chainQuery)
     // Tạo một lệnh truy vấn mà không thực hiện nó ngay lập tức
@@ -129,6 +146,13 @@ const getProducts = asyncHandler(async (req, res) => {
 //UPDATE PRODUCT
 const updateProduct = asyncHandler(async (req, res) => {
     const { pid } = req.params;
+    const files = req?.files;
+    if (files?.thumb) {
+        req.body.thumb = files?.thumb[0]?.path;
+    }
+    if (files?.images) {
+        req.body.images = files?.images?.map(item => item.path)
+    }
     if (req.body && req.body.title) {
         req.body.slug = slugify(req.body.title);
     }
@@ -148,9 +172,36 @@ const deleteProduct = asyncHandler(async (req, res) => {
     const deletedProduct = await Product.findByIdAndDelete(pid);
     return res.status(200).json({
         status: deletedProduct ? true : false,
-        deletedProduct: deletedProduct ? deletedProduct : 'Can not delete product',
+        message: deletedProduct ? 'Delete product successfully!' : 'Delete product fail!!',
     });
 });
+const addVarriant = asyncHandler(async (req, res) => {
+    const { pid } = req.params;
+    const { title, color, price, quantity } = req.body;
+    const thumb = req.files.thumb[0]?.path;
+    const images = req.files?.images?.map((item) => item.path);
+    if (thumb) {
+        req.body.thumb = thumb;
+    }
+    if (images) {
+        req.body.images = images;
+    }
+    if (!(title || color || price || quantity || thumb || images)) {
+        throw new Error('Missing Input');
+    }
+    req.body.slug = slugify(title);
+    const response = await Product.findByIdAndUpdate(
+        pid,
+        {
+            $push: { varriants: { color, price, title, thumb, images, quantity, sku: makeSKU().toUpperCase() } },
+        },
+        { new: true },
+    );
+    return res.status(200).json({
+        status: response ? true : false,
+        message: response ? 'Add varriant successfully' : 'Add varriant fail',
+    });
+})
 
 //RATINGs PRODUCT
 const ratingProduct = asyncHandler(async (req, res) => {
@@ -262,4 +313,5 @@ module.exports = {
     ratingProduct,
     uploadImageProduct,
     insertData,
+    addVarriant
 };

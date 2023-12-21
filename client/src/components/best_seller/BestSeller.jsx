@@ -41,7 +41,6 @@ const BestSeller = () => {
                 ))}
             </div>
             <div className='border-b border-[1.5px] border-main mt-4'>
-
             </div>
             <div className='mt-6 mx-[-10px] '>
                 <CustomSlider activeTab={activeTab} bestSeller={bestSeller} newestProduct={newProduct} />

@@ -52,7 +52,8 @@ const AdminSidebar = () => {
                                     <div className='flex flex-col pl-6'
                                     >
                                         {item.subMenu?.map((subItem, index) => (
-                                            <NavLink key={index}
+                                            <NavLink
+                                                key={index}
                                                 onClick={e => e.stopPropagation()}
                                                 to={subItem.path}
                                                 className={({ isActive }) => clsx(isActive && activeStyle, !isActive && notActiveStyle, 'pl-6')}>

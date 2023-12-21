@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Mansonry from 'react-masonry-css';
 import { createSearchParams, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { apiGetProducts } from '../../apis';
+import { apiGetProducts, apiGetCategories } from '../../apis';
 import { Breadcrumb, FilterProduct, InputSelect, Pagination, Product } from '../../components';
 import { sorts } from '../../ultils/constants';
+import { useSelector } from 'react-redux';
+import { colors } from '../../ultils/constants';
 
 const breakpointColumnsObj = {
     default: 4,
@@ -15,7 +17,8 @@ const ListProduct = () => {
     const navigate = useNavigate();
     //define params
     const { category } = useParams();
-
+    // const [categories, setCategories] = useState([])
+    const { categories } = useSelector(state => state.app)
     //define usestate
     const [products, setProducts] = useState(null)
 
@@ -61,6 +64,7 @@ const ListProduct = () => {
         fetchProductsByCategory(finalQueries)
     }, [params])
 
+    // console.log(categories?.find(item => item.title.toLowerCase() === category)?.brand)
     //define function change active filter
     const changeActiveFilter = useCallback((name) => {
         if (activeClick === name) {
@@ -108,6 +112,13 @@ const ListProduct = () => {
                             name='Color'
                             activeClick={activeClick}
                             changeActiveFilter={changeActiveFilter}
+                            colors={colors}
+                        />
+                        <FilterProduct
+                            name='Brand'
+                            activeClick={activeClick}
+                            changeActiveFilter={changeActiveFilter}
+                            brands={categories?.find(item => item.title.toLowerCase() === category)?.brand}
                         />
                     </div>
                 </div>
