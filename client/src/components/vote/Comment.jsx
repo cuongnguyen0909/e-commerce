@@ -4,7 +4,7 @@ import moment from 'moment';
 import { renderStarFromNumber } from '../../ultils/helpers';
 const Comment = ({ image = avatar, name = 'Anonymous', comment, updatedAt, star }) => {
     return (
-        <div className='flex gap-5 border bg-gray-100'>
+        <div className='flex gap-5 border bg-gray-100 w-full'>
             <div className='flex-none'>
                 <img src={image} alt="avatar" className='w-[30px] h-[30px] object-cover rounded-full' />
             </div>

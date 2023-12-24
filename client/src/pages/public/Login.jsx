@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import { apiFinalRegister, apiForgotPassword, apiLogin, apiRegister } from '../../apis';
@@ -61,6 +61,7 @@ const Login = () => {
     )
     const [email, setEmail] = useState('');
 
+    const [searchParams] = useSearchParams();
     //handle forgot password
     const handleForgotPassword = async () => {
         const response = await apiForgotPassword({ email });
@@ -104,7 +105,7 @@ const Login = () => {
                 const result = await apiLogin(data);
                 if (result.status) {
                     dispatch(login({ isLoggedIn: true, token: result.accessToken, userData: result.userData }));
-                    navigate(`/${path.HOME}`);
+                    searchParams.get('redirect') ? navigate(searchParams.get('redirect')) : navigate(`/${path.HOME}`);
                 } else {
                     Swal.fire('Oops', result.message, 'error')
                 }

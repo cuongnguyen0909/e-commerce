@@ -41,31 +41,26 @@ export const productExtraInfo = [
         id: 1,
         title: 'Guarantee',
         sub: 'Quality Checked',
-        icon: <IoShieldHalf />
     },
     {
         id: 2,
         title: 'Free Shipping   ',
         sub: 'Free On All Products',
-        icon: <CiDeliveryTruck />
     },
     {
         id: 3,
         title: 'Special Gift Cards',
         sub: 'Special Gift Cards',
-        icon: <CiGift />
     },
     {
         id: 4,
         title: 'Free Return',
         sub: 'Within 7 Days',
-        icon: <MdOutlineReply />
     },
     {
         id: 5,
         title: 'Consultancy',
         sub: 'Lifetime 24/7/356',
-        icon: <MdOutlineTty />
     }
 ]
 export const productInfoTabs = [

@@ -5,10 +5,11 @@ import { Link } from 'react-router-dom';
 import path from '../../ultils/path';
 import { useSelector, useDispatch } from 'react-redux';
 import { Fragment } from 'react';
-import { logout } from '../../store/user/userSlice'
-const { MdLocalPhone, MdMarkEmailRead, HiOutlineShoppingCart, FaUserShield } = icons;
+import { logout } from '../../store/user/userSlice';
+import { showCart } from '../../store/app/appSlice';
 const Header = () => {
     const dispatch = useDispatch();
+    const { MdLocalPhone, MdMarkEmailRead, HiOutlineShoppingCart, FaUserShield } = icons;
     const { isLoggedIn, current } = useSelector(state => state.user);
     // console.log(current?.role)
     const [isShowOption, setIsShowOption] = useState(false);
@@ -45,9 +46,11 @@ const Header = () => {
                     <span>Online Support 24/7</span>
                 </div>
                 {isLoggedIn && <Fragment>
-                    <div className="flex items-center px-6 border-r justify-center gap-2 cursor-pointer">
+                    <div
+                        onClick={() => dispatch(showCart())}
+                        className="flex items-center px-6 border-r justify-center gap-2 cursor-pointer">
                         <HiOutlineShoppingCart color="red" />
-                        <span>0 items</span>
+                        <span>{`${current?.cart?.length || 0} items`}</span>
                     </div>
                     <div
                         className="flex items-center px-6 border-r justify-center gap-2 cursor-pointer relative"

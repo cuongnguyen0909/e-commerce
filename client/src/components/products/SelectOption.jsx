@@ -1,31 +1,10 @@
 import React, { memo } from 'react'
-import icons from '../../ultils/icons';
-
-const { FaHeart, IoEyeSharp, IoMenu } = icons;
-
-const iconList = [
-    {
-        id: 1,
-        name: <FaHeart />
-    },
-    {
-        id: 2,
-        name: <IoEyeSharp />
-    },
-    {
-        id: 3,
-        name: <IoMenu />
-    }
-]
-
-const SelectOptions = ({ icon }) => {
+import clsx from 'clsx';
+const SelectOptions = ({ icon, isAddToCart }) => {
     return (
-        <div className='flex gap-2'
-        >
+        <div className='flex gap-2'>
             <div
-                className='hover:border-gray-800 hover:bg-gray-800 hover:text-white 
-                cursor-pointer w-[40px] shadow-md border h-[40px] rounded-full 
-                bg-gray-200 flex justify-center items-center'>
+                className={clsx('hover:border-gray-600 hover:bg-gray-600 hover:text-white cursor-pointer w-[40px] shadow-md border h-[40px] rounded-full bg-gray-200 flex justify-center items-center', isAddToCart && 'hover:border-sky-400 hover:bg-sky-400')}>
                 {icon}
             </div>
         </div>

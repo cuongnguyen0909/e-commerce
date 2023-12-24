@@ -95,7 +95,13 @@ const login = asyncHandler(async (req, res) => {
 //GET A USER
 const getCurrentUser = asyncHandler(async (req, res) => {
     const { _id } = req.user;
-    const user = await User.findOne({ _id }).select('-refreshToken -password');
+    const user = await User.findOne({ _id }).select('-refreshToken -password').populate({
+        path: 'cart',
+        populate: {
+            path: 'product',
+            select: 'title thumb price'
+        }
+    })
     return res.status(200).json({
         status: user ? true : false,
         user: user ? user : 'User not found',
@@ -113,7 +119,7 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 //UPDATE USER
 const updateUser = asyncHandler(async (req, res) => {
-    console.log(req.file)
+    // console.log(req.file)
     const { _id } = req.user;
     const { firstName, lastName, email, mobile } = req.body;
     if (req.file) {
@@ -354,58 +360,69 @@ const updateAddress = asyncHandler(async (req, res) => {
 });
 const updateCart = asyncHandler(async (req, res) => {
     const { _id } = req.user;
-    const { pid, quantity, color } = req.body;
-    if (!pid || !quantity || !color) throw new Error('Missing input');
+    const { pid, quantity = 1, color, price, thumb, title } = req.body;
+    if (!pid || !color) throw new Error('Missing input');
     const userCart = await User.findById(_id).select('cart');
-    const alreadyProduct = userCart?.cart?.find((item) => item.product.toString() === pid);
+    const alreadyProduct = userCart?.cart?.find((item) => item?.product.toString() === pid && item?.color === color);
     if (alreadyProduct) {
-        if (alreadyProduct.color === color) {
-            const response = await User.updateOne(
-                {
-                    cart: { $elemMatch: alreadyProduct },
-                },
-                {
-                    $set: { 'cart.$.quantity': quantity },
-                },
-                {
-                    new: true,
-                },
-            );
-            return res.json({
-                status: response ? true : false,
-                updatedUser: response ? response : 'Can not update cart',
-            });
-        } else {
-            const response = await User.findByIdAndUpdate(
-                _id,
-                {
-                    $push: { cart: { product: pid, quantity, color } },
-                },
-                { new: true },
-            );
-            return res.json({
-                status: response ? true : false,
-                updatedUser: response ? response : 'Can not update cart',
-            });
-        }
+        const response = await User.updateOne(
+            {
+                cart: { $elemMatch: alreadyProduct },
+            },
+            {
+                $set: {
+                    'cart.$.quantity': quantity,
+                    'cart.$.price': price,
+                    'cart.$.thumb': thumb,
+                    'cart.$.title': title,
+                }
+            },
+            { new: true, },
+        );
+        return res.json({
+            status: response ? true : false,
+            message: response ? 'Updated your cart successfully' : 'Can not update cart',
+        });
+
     } else {
         const response = await User.findByIdAndUpdate(
             _id,
             {
-                $push: { cart: { product: pid, quantity, color } },
+                $push: { cart: { product: pid, quantity, color, price, thumb, title } },
             },
             { new: true },
         );
         return res.json({
             status: response ? true : false,
-            updatedUser: response ? response : 'Can not update cart',
+            message: response ? 'Updated your cart successfully' : 'Can not update cart',
         });
     }
+});
+const removeProductInCart = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    const { pid, color } = req.params;
+    const userCart = await User.findById(_id).select('cart');
+    const alreadyProduct = userCart?.cart?.find((item) => item.product.toString() === pid && item.color === color);
+    if (!alreadyProduct) {
+        return res.json({
+            status: false,
+            message: 'Product not found in cart',
+        });
+    }
+    const response = await User.findByIdAndUpdate(
+        _id,
+        {
+            $pull: { cart: { product: pid, color } },
+        },
+        { new: true },
+    );
     return res.json({
         status: response ? true : false,
-        updatedUser: response ? response : 'Can not update new address',
+        message: response ? 'Updated your cart successfully' : 'Can not update cart',
     });
+
 });
+
 module.exports = {
     registerUser,
     login,
@@ -420,5 +437,6 @@ module.exports = {
     updateUserByAdmin,
     updateAddress,
     updateCart,
-    finalRegister
+    finalRegister,
+    removeProductInCart
 };

@@ -18,6 +18,7 @@ router.put('/resetpassword', userController.resetPassword);
 router.put('/address', verifyAccessToken, userController.updateAddress);
 router.delete('/delete/:uid', [verifyAccessToken, isAdmin], userController.deleteUser);
 router.put('/cart', verifyAccessToken, userController.updateCart);
+router.delete('/remove-cart/:pid/:color', verifyAccessToken, userController.removeProductInCart);
 router.put('/current', verifyAccessToken, uploadImage.single("avatar"), userController.updateUser);
 router.put('/:uid', verifyAccessToken, isAdmin, userController.updateUserByAdmin);
 

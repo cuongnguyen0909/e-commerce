@@ -63,7 +63,7 @@ const ManageUser = () => {
     // console.log(editUser)
     const handleUpdateUser = async (data) => {
         const response = await apiUpdateUser(data, editUser?._id);
-        console.log('data', data)
+        // console.log('data', data)
         if (response.status) {
             render()
             toast.success(response.updatedUser);
@@ -74,7 +74,7 @@ const ManageUser = () => {
     }
 
     const handleDeleteUser = (uid) => {
-        console.log(uid)
+        // console.log(uid)
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",

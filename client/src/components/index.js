@@ -33,3 +33,7 @@ export { default as InputHookForm } from './inputs/InputHookForm';
 export { default as SelectHookForm } from './inputs/SelectHookForm';
 export { default as MarkdownEditor } from './inputs/MarkdownEditor';
 export { default as MemberSidebar } from './sidebar/member/MemberSidebar';
+export { default as QuickView } from './products/QuickView';
+export { default as ShowCart } from './cart/ShowCart';
+export { default as CartItemInDetailCart } from './cart/CartItemInDetailCart';
+

@@ -13,9 +13,9 @@ const settings = {
 };
 const CustomSlider = ({ activeTab, bestSeller, newestProduct, relatedProduct, normal }) => {
     return (
-        <div>
+        <div className='relative'>
             {activeTab ? (
-                <Slider {...settings} className='custom-slider'>
+                <Slider {...settings} className='custom-slider relative'>
                     {activeTab === 1
                         ? bestSeller?.map(item => (
                             <Product key={item._id} productData={item} isNew={false} />
@@ -25,7 +25,7 @@ const CustomSlider = ({ activeTab, bestSeller, newestProduct, relatedProduct, no
                         ))}
                 </Slider>
             ) : (
-                <Slider {...settings} className='custom-slider'>
+                <Slider {...settings} className='custom-slider relative' >
                     {relatedProduct?.map(item => (
                         <Product key={item._id} productData={item} normal={normal} />
                     ))}

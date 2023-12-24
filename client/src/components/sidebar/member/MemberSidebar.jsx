@@ -47,7 +47,7 @@ const MemberSidebar = () => {
             </div>
             <Link
                 to={`${'/'}`}>
-                <div className='flex px-4 gap-2 text-main'>
+                <div className='flex px-4 font-bold gap-2 text-blue-700 hover:bg-gray-400'>
                     <IoReturnDownBackSharp size={28} />
                     Homepage
                 </div>

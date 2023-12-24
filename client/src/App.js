@@ -1,32 +1,49 @@
 import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import {
-    Login, Home, Public, FAQs, Service, Blog, DetailProduct,
-    ListProduct, FinalRegister, ResetPassword, ShowProductSearch
+    Blog,
+    DetailCart,
+    DetailProduct,
+    FAQs,
+    FinalRegister,
+    Home,
+    ListProduct,
+    Login,
+    Public,
+    ResetPassword,
+    Service,
+    ShowProductSearch
 } from './pages/public';
 
-import { AdminLayout, Dashboard, ManageOrder, ManageProduct, ManageUser, CreateProduct, ManageCategory } from './pages/admin';
-import { MemberLayout, Personal, PurchaseHistory, Cart, Wishlist } from './pages/member';
-import path from './ultils/path';
-import { getCategories } from './store/app/appAction';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Modal } from './components';
+import { Modal, ShowCart } from './components';
+import { AdminLayout, CreateProduct, Dashboard, ManageCategory, ManageOrder, ManageProduct, ManageUser } from './pages/admin';
+import { MemberLayout, Personal, PurchaseHistory, Wishlist, Checkout } from './pages/member';
+import { getCategories } from './store/app/appAction';
+import { showCart } from './store/app/appSlice';
+import path from './ultils/path';
 
 function App() {
     const dispatch = useDispatch();
-
     useEffect(() => {
         dispatch(getCategories());
     }, []);
 
-    const { isShowModal, modalChildren } = useSelector(state => state.app);
+    const { isShowModal, modalChildren, isShowCart } = useSelector(state => state.app);
 
     return (
-        <div className="font-main relative">
+        <div className="font-main">
+            {isShowCart &&
+                <div
+                    onClick={() => dispatch(showCart())}
+                    className='absolute inset-0 backdrop-brightness-90 z-50 flex justify-end'>
+                    <ShowCart />
+                </div>}
             {isShowModal && <Modal>{modalChildren}</Modal>}
             <Routes>
+                <Route path={path.CHECKOUT} element={<Checkout />} />
                 <Route path={path.PUBLIC} element={<Public />}>
                     <Route path={path.HOME} element={<Home />} />
                     <Route path={path.BLOG} element={<Blog />} />
@@ -48,7 +65,7 @@ function App() {
                 {/* //member */}
                 <Route path={path.MEMBER} element={<MemberLayout />}>
                     <Route path={path.PERSONAL} element={<Personal />} />
-                    <Route path={path.MY_CART} element={<Cart />} />
+                    <Route path={path.MY_CART} element={<DetailCart />} />
                     <Route path={path.PURCHASE_HISTORY} element={<PurchaseHistory />} />
                     <Route path={path.WISHLIST} element={<Wishlist />} />
                 </Route>

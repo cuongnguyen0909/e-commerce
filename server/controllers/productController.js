@@ -259,23 +259,18 @@ const uploadImageProduct = asyncHandler(async (req, res) => {
 
 //FUNCTION INSERT DATA
 //FUNCTION INSERT DATA
-const ultils = async (product) => {
-    let price = Math.round(Number(product?.price?.match(/\d/g).join('')) / 100);
-
-    // Kiểm tra nếu category là laptop
-    if (product?.category[1] === 'Laptop') {
-        // Đảm bảo giá lớn hơn 10.000.000
-        price = Math.max(price, 10000000);
-        // Đảm bảo giá không bé hơn 500.000
-        price = Math.max(price, 500000);
-    }
-    if (product?.category[1] === 'Smartphone') {
-        // Đảm bảo giá lớn hơn 10.000.000
-        price = Math.max(price, 6000000);
-        // Đảm bảo giá không bé hơn 500.000
-        price = Math.max(price, 2000000);
+const utils = async (product) => {
+    // Kiểm tra xem danh mục của sản phẩm có trong danh sách ['Laptop', 'Smartphone', 'Tablet'] không
+    const validCategories = ['Laptop', 'Smartphone', 'Tablet'];
+    if (!product?.category || !product.category.some(cat => validCategories.includes(cat))) {
+        // Nếu không thuộc danh mục mong muốn, không thêm sản phẩm
+        return;
     }
 
+    // Tạo giá random trong khoảng từ 9000000 đến 40000000
+    let price = Math.round(Math.random() * (40000000 - 9000000) + 9000000);
+
+    // Thêm sản phẩm nếu thoả mãn điều kiện
     await Product.create({
         title: product?.name,
         slug: slugify(product?.name) + Math.round(Math.random() * 1000) + '',
@@ -286,18 +281,20 @@ const ultils = async (product) => {
         quantity: Math.round(Math.random() * 1000),
         sold: Math.round(Math.random() * 100),
         images: product?.images,
-        color: product?.variants?.find((item) => item.label === 'Color')?.variants[0],
+        color: product?.variants?.find((item) => item.label === 'Color')?.variants[0] || 'BLACK',
         thumb: product?.thumb,
-        totalRatings: 0, // Sử dụng số lượng 5 sao tính toán
+        totalRatings: 0,
     });
 };
+
+
 
 //INSERT DATA TO DATABASE
 const insertData = asyncHandler(async (req, res) => {
     const promises = [];
     // console.log(typeof data);
     for (let product of data) {
-        promises.push(ultils(product));
+        promises.push(utils(product));
     }
     await Promise.all(promises);
     return res.json({

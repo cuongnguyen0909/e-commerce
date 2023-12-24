@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, current } from '@reduxjs/toolkit';
 import * as actions from '../user/userAction';
 
 export const userSlice = createSlice({
@@ -8,7 +8,8 @@ export const userSlice = createSlice({
         current: null,
         token: null,
         isLoading: false,
-        message: ''
+        message: '',
+        currentCart: []
     },
     reducers: {
         login: (state, action) => {
@@ -25,6 +26,19 @@ export const userSlice = createSlice({
         },
         clearMessage: (state, action) => {
             state.message = '';
+        },
+        updateCart: (state, action) => {
+            // console.log(action);
+            const { pid, color, quantity } = action.payload;
+            const updateCart = JSON.parse(JSON.stringify((state.currentCart)));
+            const completeCart = updateCart.map((item) => {
+                if (item.product._id === pid && item.color === color) {
+                    return { ...item, quantity: quantity }
+                } else {
+                    return item;
+                }
+            });
+            state.currentCart = completeCart;
         }
     },
     extraReducers: (builder) => {
@@ -38,6 +52,7 @@ export const userSlice = createSlice({
             state.isLoading = false;
             state.current = action.payload;//action.payload chinh la response.user ben userSlice.js
             state.isLoggedIn = true;
+            state.currentCart = action.payload.cart;
         })
 
         builder.addCase(actions.getCurrent.rejected, (state, action) => {
@@ -49,5 +64,5 @@ export const userSlice = createSlice({
         })
     }
 })
-export const { login, logout, clearMessage } = userSlice.actions; /// nam trong reducers
+export const { login, logout, clearMessage, updateCart } = userSlice.actions; /// nam trong reducers
 export default userSlice.reducer;

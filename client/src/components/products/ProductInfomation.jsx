@@ -50,8 +50,8 @@ const ProductInfomation = ({ totalRatings, ratings, nameProduct, pid, reRender }
         }
     }
     return (
-        <div >
-            <div className='flex items-center gap-2 bottom-[-1px]'>
+        <div className='w-full'>
+            {/* <div className='flex items-center gap-2 bottom-[-1px]'>
                 {productInfoTabs?.map((item) => (
                     <span
                         className={`cursor-pointer px-4 p-2 
@@ -69,9 +69,8 @@ const ProductInfomation = ({ totalRatings, ratings, nameProduct, pid, reRender }
                         {item.content}
                     </div>
                 ))}
-
-            </div>
-            <div className='border mt-8'>
+            </div> */}
+            <div className='border mt-12 w-full'>
                 <div className='flex pt-4 flex-col w-full'>
                     <div className='flex'>
                         <div className='flex-4 flex-col gap-2 flex items-center justify-center'>

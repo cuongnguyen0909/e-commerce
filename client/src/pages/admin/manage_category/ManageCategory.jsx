@@ -31,7 +31,7 @@ const ManageCategory = () => {
             // Handle the error as needed
         }
     }
-    console.log(categories)
+    // console.log(categories)
 
     useEffect(() => {
         // console.log(watch('thumb'));

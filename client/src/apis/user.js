@@ -49,3 +49,12 @@ export const apiUpdateProfile = (data) => axios({
     method: 'PUT',
     data
 });
+export const apiUpdateCart = (data) => axios({
+    url: '/user/cart',
+    method: 'PUT',
+    data
+});
+export const apiRemoveProdcutInCart = (pid, color) => axios({
+    url: `/user/remove-cart/${pid}/${color}`,
+    method: 'DELETE',
+});

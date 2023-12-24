@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { apiGetProducts } from '../../apis';
 import { getNewProduct } from '../../store/products/productAction';
 import CustomSlider from '../custom_slider/CustomSlider';
-
 const tabs = [
     { id: 1, name: 'Best Seller', },
     { id: 2, name: 'New Arrivals', }
@@ -14,6 +13,7 @@ const BestSeller = () => {
     const [activeTab, setActiveTab] = useState(1);
     const dispatch = useDispatch();
     const { newProduct } = useSelector(state => state.products);
+    const { isShowModal } = useSelector(state => state.app);
     const fetchProducts = async () => {
         try {
             const response = await apiGetProducts({ sort: '-cretedAt', 'price[gt]': '8000000' });
@@ -32,8 +32,10 @@ const BestSeller = () => {
         dispatch(getNewProduct());
     }, []);
     return (
-        <div>
-            <div className='flex text-[20px] '>
+        <div
+            className='relative'
+        >
+            <div className='flex text-[20px]'>
                 {tabs?.map(item => (
                     <span key={item.id} className={`flex items-start cursor-pointer font-semibold pr-5 mr-5 uppercase border-r text-gray-400 ${activeTab === item.id ? 'text-gray-950' : ''}`}
                         onClick={() => setActiveTab(item.id)}
@@ -42,7 +44,7 @@ const BestSeller = () => {
             </div>
             <div className='border-b border-[1.5px] border-main mt-4'>
             </div>
-            <div className='mt-6 mx-[-10px] '>
+            <div className='mt-6 mx-[-10px]'>
                 <CustomSlider activeTab={activeTab} bestSeller={bestSeller} newestProduct={newProduct} />
             </div>
             <div className='flex w-[440px] gap-4 mt-4 items-center'>

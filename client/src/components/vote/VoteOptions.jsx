@@ -14,7 +14,10 @@ const VoteOptions = ({ nameProduct, handleSubmitReviewOption }) => {
     }, [])
 
     return (
-        <div onClick={e => e.stopPropagation()} ref={modalRef} className='flex-col bg-white w-[700px] p-4 flex items-center justify-center'>
+        <div
+            onClick={e => e.stopPropagation()}
+            ref={modalRef}
+            className='flex-col bg-white w-[700px] p-4 flex items-center justify-center'>
             <img src={logo} alt="logo" className='w-[300px] my-4 object-contain ' />
             <h2 className='font-bold text-gray-800 text-[18px] pb-4'>{` ${nameProduct}`}</h2>
 
