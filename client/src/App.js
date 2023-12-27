@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import {
     Blog,
-    DetailCart,
     DetailProduct,
     FAQs,
     FinalRegister,
@@ -20,7 +19,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Modal, ShowCart } from './components';
 import { AdminLayout, CreateProduct, Dashboard, ManageCategory, ManageOrder, ManageProduct, ManageUser } from './pages/admin';
-import { MemberLayout, Personal, PurchaseHistory, Wishlist, Checkout } from './pages/member';
+import { MemberLayout, Personal, PurchaseHistory, Checkout, DetailCart, Wishlist } from './pages/member';
 import { getCategories } from './store/app/appAction';
 import { showCart } from './store/app/appSlice';
 import path from './ultils/path';

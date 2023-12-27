@@ -5,8 +5,17 @@ export const apiGetCategories = (params) => axios({
     method: 'GET',
     params: params
 })
-export const apiCreateCatgory = (data) => axios({
+export const apiCreateCategory = (data) => axios({
     url: '/productcategories',
     method: 'POSt',
     data
 })
+
+export const apiDeleteCategory = (title) => axios({
+    url: `/productcategories/${title}`,
+    method: 'DELETE',
+});
+export const apiDeleteBrand = (title, brand) => axios({
+    url: `/productcategories/${title}/${brand}`,
+    method: 'DELETE',
+});

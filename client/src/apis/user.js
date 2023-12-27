@@ -30,6 +30,7 @@ export const apiGetCurrent = () => axios({
     url: '/user/current',
     method: 'GET'
 });
+
 export const apiGetAllUser = (params) => axios({
     url: '/user/',
     method: 'GET',
@@ -54,7 +55,12 @@ export const apiUpdateCart = (data) => axios({
     method: 'PUT',
     data
 });
+
 export const apiRemoveProdcutInCart = (pid, color) => axios({
     url: `/user/remove-cart/${pid}/${color}`,
     method: 'DELETE',
+});
+export const apiUpdatedWishlist = (pid) => axios({
+    url: `/user/wishlist/${pid}`,
+    method: 'PUT',
 });
