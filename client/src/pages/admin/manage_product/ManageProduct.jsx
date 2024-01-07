@@ -1,17 +1,21 @@
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { FaListUl } from "react-icons/fa";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { apiGetProducts, apiDeleteProduct } from '../../../apis';
-import { InputHookForm, Pagination } from '../../../components';
-import CustomVarriant from './CustomVarriant';
-import useDebounce from '../../../custom_hook/useDebounce';
-import UpdateProduct from './UpdateProduct';
 import Swal from 'sweetalert2';
-import { toast } from 'react-toastify'
+import { apiDeleteProduct, apiGetProducts } from '../../../apis';
+import { InputHookForm, Pagination } from '../../../components';
+import useDebounce from '../../../custom_hook/useDebounce';
+import CustomVarriant from './CustomVarriant';
+import ManageVarriant from './ManageVarriant';
+import UpdateProduct from './UpdateProduct';
 import { FaRegPenToSquare } from "react-icons/fa6";
 import { IoIosRemoveCircle } from "react-icons/io";
-import { BiCustomize } from "react-icons/bi";
+import { MdOutlinePlaylistAdd } from "react-icons/md";
+import { toast } from 'react-toastify';
+
+import { formatMoney } from '../../../ultils/helpers';
 
 const ManageProduct = () => {
     const navigate = useNavigate();
@@ -23,6 +27,7 @@ const ManageProduct = () => {
     const [editProduct, setEditProduct] = useState(null);
     const [updateProduct, setUpdateProduct] = useState(false);
     const [customVarriant, setCustomVarriant] = useState(null)
+    const [viewVarriant, setViewVarriant] = useState(null)
 
     const render = () => {
         setUpdateProduct(!updateProduct)
@@ -50,10 +55,9 @@ const ManageProduct = () => {
     }, [searchDebounce])
     useEffect(() => {
         const searchParams = Object.fromEntries([...params])
-
         // console.log(products)
         fetchProducts(searchParams)
-    }, [params, updateProduct])
+    }, [params, updateProduct, location, searchDebounce, viewVarriant, customVarriant, editProduct])
 
     const handleDeleteProduct = async (pid) => {
         Swal.fire({
@@ -92,6 +96,13 @@ const ManageProduct = () => {
                             render={render}
                             setCustomVarriant={setCustomVarriant} />
                     </div>}
+                {viewVarriant &&
+                    <div className='absolute inset-0 min-h-screen bg-gray-100 z-50'>
+                        <ManageVarriant
+                            viewVarriant={viewVarriant}
+                            pid={viewVarriant?._id}
+                            setViewVarriant={setViewVarriant} />
+                    </div>}
                 <div className='h-[69px] w-full '></div>
                 <div className='p-4 bg-gray-100 w-full fixed top-0 flex justify-between items-center'>
                     <h1 className='text-3xl font-bold tracking-tight'>
@@ -109,9 +120,9 @@ const ManageProduct = () => {
                         />
                     </form>
                 </div>
-                <table className='table-auto '>
+                <table className='table-auto'>
                     <thead className='text-center text-[16px]'>
-                        <tr className=' bg-sky-600'>
+                        <tr className=' bg-sky-700 text-white border-collapse border-gray-100'>
                             <th className='py-2'>#</th>
                             <th className='py-2'>Thumbnail</th>
                             <th className='py-2'>Title</th>
@@ -123,13 +134,13 @@ const ManageProduct = () => {
                             <th className='py-2'>Color</th>
                             <th className='py-2'>Rating</th>
                             <th className='py-2'>Varriants</th>
-                            <th className='py-2'>Action</th>
                             <th className='py-2'>Updated At</th>
+                            <th className='py-2'>Action</th>
                         </tr>
                     </thead>
-                    <tbody className='text-[14px]'>
+                    <tbody className='text-[14px] font-medium'>
                         {products?.products?.map((item, index) => (
-                            <tr key={item._id}>
+                            <tr key={item._id} className='h-[60px]'>
                                 <td className='text-center border-b border-sky-200'>
                                     {((params.get('page') > 1 ? params.get('page') - 1 : 0) * process.env.REACt_APP_LIMIT) + (index + 1)}</td>
                                 <td className='text-center border-b border-sky-200'>
@@ -138,7 +149,7 @@ const ManageProduct = () => {
                                 <td className='text-center border-b border-sky-200'>{item?.title}</td>
                                 <td className='text-center border-b border-sky-200'>{item?.brand}</td>
                                 <td className='text-center border-b border-sky-200'>{item?.category}</td>
-                                <td className='text-center border-b border-sky-200'>{item?.price}</td>
+                                <td className='text-center border-b border-sky-200'>{`${formatMoney(item?.price)} VND`}</td>
                                 <td className='text-center border-b border-sky-200'>{item?.quantity}</td>
                                 <td className='text-center border-b border-sky-200'>{item?.sold}</td>
                                 <td className='text-center border-b border-sky-200'>{item?.color}</td>
@@ -147,22 +158,30 @@ const ManageProduct = () => {
                                 <td className='text-center border-b border-sky-200'>{moment(item?.updatedAt).format('DD/MM/YYYY')}</td>
                                 <td className='text-center border-b border-sky-200'>
                                     <span
+                                        title='Edit product'
                                         className='text-blue-500 hover:underline hover:text-orange-500 inline-block cursor-pointer px-1'
                                         onClick={() => setEditProduct(item)}>
                                         <FaRegPenToSquare size={20} />
                                     </span>
                                     <span
+                                        title='Delete product'
                                         className='text-blue-500 hover:underline hover:text-orange-500 inline-block cursor-pointer px-1'
                                         onClick={() => handleDeleteProduct(item._id)}>
                                         <IoIosRemoveCircle size={20} />
                                     </span>
                                     <span
+                                        title='Add varriant'
                                         className='text-blue-500 hover:underline hover:text-orange-500 inline-block cursor-pointer px-1'
                                         onClick={() => { setCustomVarriant(item) }}>
-                                        <BiCustomize size={20} />
+                                        <MdOutlinePlaylistAdd size={20} />
+                                    </span>
+                                    <span
+                                        title='View list varriant'
+                                        className='text-blue-500 hover:underline hover:text-orange-500 inline-block cursor-pointer px-1'
+                                        onClick={() => { setViewVarriant(item) }}>
+                                        <FaListUl size={20} />
                                     </span>
                                 </td>
-
                             </tr>
                         ))}
                     </tbody>

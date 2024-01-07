@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import banner from '../../assets/BANNER.jpg';
+import banner from '../../assets/images/BANNER.jpg';
 const Banner = () => {
     return (
         <div className="w-main ">

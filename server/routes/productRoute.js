@@ -30,7 +30,7 @@ router.put(
     productController.uploadImageProduct,
 );
 router.put(
-    '/varriant/:pid',
+    '/addvarriant/:pid',
     verifyAccessToken, isAdmin,
     uploadImage.fields([
         {
@@ -41,6 +41,24 @@ router.put(
         }
     ]),
     productController.addVarriant,
+);
+router.put(
+    '/updatevarriant/:pid',
+    verifyAccessToken, isAdmin,
+    uploadImage.fields([
+        {
+            name: 'images', maxCount: 10,
+        },
+        {
+            name: 'thumb', maxCount: 1,
+        }
+    ]),
+    productController.addVarriant,
+);
+router.delete(
+    '/deletevarriant/:pid/:sku',
+    verifyAccessToken, isAdmin,
+    productController.deleteVarriant
 );
 router.put('/:pid', verifyAccessToken, isAdmin, uploadImage.fields([
     {

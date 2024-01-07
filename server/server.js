@@ -4,7 +4,7 @@ const dbConnect = require('./config/dbConnect');
 const initRoutes = require('./routes');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-
+const bodyParser = require('body-parser');
 const app = express();
 
 const port = process.env.PORT || 8888;

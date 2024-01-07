@@ -3,14 +3,17 @@ import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { apiResetPassword } from '../../apis';
 import { Button } from '../../components';
+import { useNavigate } from 'react-router-dom';
 
 const ResetPassword = () => {
+    const navigate = useNavigate();
     const [password, setPassword] = useState('');
     const { token } = useParams();
     const handleResetPassword = async () => {
         const response = await apiResetPassword({ password, token });
         if (response.status) {
             toast.success(response.message, { theme: 'colored' })
+            navigate('/login')
         } else {
             toast.info(response.message, { theme: 'colored' })
         }
@@ -26,7 +29,9 @@ const ResetPassword = () => {
                     value={password}
                     onChange={e => setPassword(e.target.value)} />
                 <div className='flex items-center justify-end gap-4'>
-                    <Button name='Submit' handleOnClick={handleResetPassword} style='px-4 py-2 rounded-md text-white my-2 bg-blue-500 text-semibold' />
+                    <Button name='Submit' handleOnClick={handleResetPassword} style='px-4 py-2 rounded-md text-white my-2 bg-blue-500 text-semibold'>
+                        Submit
+                    </Button>
                 </div>
             </div>
         </div>

@@ -20,7 +20,7 @@ const createProduct = asyncHandler(async (req, res) => {
         throw new Error('Missing Input');
     }
     req.body.slug = slugify(title);
-    const newProduct = await Product.create(req.body);
+    const newProduct = await Product.create({ ...req.body, initialQuantity: quantity });
     return res.status(200).json({
         status: newProduct ? true : false,
         createdProduct: newProduct ? newProduct : 'Can not create new product',
@@ -74,6 +74,9 @@ const getProducts = asyncHandler(async (req, res) => {
     if (query?.category) {
         formattedQueries.category = { $regex: query.category, $options: 'i' };
     }
+    if (query?.brand) {
+        formattedQueries.brand = { $regex: query.brand, $options: 'i' };
+    }
     if (query?.color) {
         delete formattedQueries.color;
         const colorArray = query.color?.split(',');
@@ -93,7 +96,7 @@ const getProducts = asyncHandler(async (req, res) => {
         delete formattedQueries.query;
         formattedQueries['$or'] = [
             { title: { $regex: query.query, $options: 'i' } },
-            { brand: { $regex: query.query, $options: 'i' } },
+            // { brand: { $regex: query.query, $options: 'i' } },
             { category: { $regex: query.query, $options: 'i' } },
         ]
     }
@@ -156,9 +159,13 @@ const updateProduct = asyncHandler(async (req, res) => {
     if (req.body && req.body.title) {
         req.body.slug = slugify(req.body.title);
     }
-    const updatedProduct = await Product.findByIdAndUpdate(pid, req.body, {
-        new: true,
-    });
+    const updatedProduct = await Product.findByIdAndUpdate(pid,
+        {
+            ...req.body, initialQuantity: req.body.quantity
+        }
+        , {
+            new: true,
+        });
     return res.status(200).json({
         status: updatedProduct ? true : false,
         updatedProduct: updatedProduct ? updatedProduct : 'Can not update product',
@@ -175,6 +182,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
         message: deletedProduct ? 'Delete product successfully!' : 'Delete product fail!!',
     });
 });
+
 const addVarriant = asyncHandler(async (req, res) => {
     const { pid } = req.params;
     const { title, color, price, quantity } = req.body;
@@ -189,11 +197,15 @@ const addVarriant = asyncHandler(async (req, res) => {
     if (!(title || color || price || quantity || thumb || images)) {
         throw new Error('Missing Input');
     }
+    const product = Product.findById(pid);
+    if (product.color === color) {
+        throw new Error('Color already exists');
+    }
     req.body.slug = slugify(title);
     const response = await Product.findByIdAndUpdate(
         pid,
         {
-            $push: { varriants: { color, price, title, thumb, images, quantity, sku: makeSKU().toUpperCase() } },
+            $push: { varriants: { color, price, title, thumb, images, quantity, initialQuantity: quantity, sku: makeSKU().toUpperCase() } },
         },
         { new: true },
     );
@@ -201,6 +213,82 @@ const addVarriant = asyncHandler(async (req, res) => {
         status: response ? true : false,
         message: response ? 'Add varriant successfully' : 'Add varriant fail',
     });
+})
+
+const deleteVarriant = asyncHandler(async (req, res) => {
+    const { pid, sku } = req.params;
+    const varriants = await Product.findById(pid).select('varriants');
+    console.log(varriants)
+    const alredyVarriant = varriants?.varriants?.find((item) => item?.sku === sku);
+
+    if (!alredyVarriant) {
+        throw new Error('Varriant not found');
+    }
+
+    const response = await Product.findByIdAndUpdate(
+        pid,
+        {
+            $pull: { varriants: { sku } },
+        },
+        { new: true },
+    );
+    return res.status(200).json({
+        status: response ? true : false,
+        message: response ? 'Delete varriant successfully' : 'Delete varriant fail',
+    });
+})
+
+const updateVarriant = asyncHandler(async (req, res) => {
+    const { pid } = req.params;
+    const { title, color, price, quantity } = req.body;
+    const thumb = req.files.thumb[0]?.path;
+    const images = req.files?.images?.map((item) => item.path);
+    if (thumb) {
+        req.body.thumb = thumb;
+    }
+    if (images) {
+        req.body.images = images;
+    }
+    if (!(title || color || price || quantity || thumb || images)) {
+        throw new Error('Missing Input');
+    }
+    req.body.slug = slugify(title);
+    const varriants = await Product.findById(pid).select('varriants');
+    const alredyVarriant = varriants?.find((item) => item?.color === color && item?.title === title);
+    if (alredyVarriant) {
+        const response = await Product.updateOne(
+            {
+                varriants: { $elemMatch: alredyVarriant },
+            },
+            {
+                $set: {
+                    'varriants.$.color': color,
+                    'varriants.$.price': price,
+                    'varriants.$.title': title,
+                    'varriants.$.thumb': thumb,
+                    'varriants.$.images': images,
+                    'varriants.$.quantity': quantity,
+                },
+            },
+            { new: true },
+        )
+        return res.status(200).json({
+            status: response ? true : false,
+            message: response ? 'Update varriant successfully' : 'Update varriant fail',
+        });
+    } else {
+        const response = await Product.findByIdAndUpdate(
+            pid,
+            {
+                $push: { varriants: { color, price, title, thumb, images, quantity, sku: makeSKU().toUpperCase() } },
+            },
+            { new: true },
+        )
+        return res.status(200).json({
+            status: response ? true : false,
+            message: response ? 'Add varriant successfully' : 'Add varriant fail',
+        });
+    }
 })
 
 //RATINGs PRODUCT
@@ -267,6 +355,8 @@ const utils = async (product) => {
         return;
     }
 
+    // Tạo số lượng random trong khoảng từ 1 đến 100
+    let stock = Math.round(Math.random() * 100);
     // Tạo giá random trong khoảng từ 9000000 đến 40000000
     let price = Math.round(Math.random() * (40000000 - 9000000) + 9000000);
 
@@ -278,7 +368,8 @@ const utils = async (product) => {
         brand: product?.brand,
         price: price,
         category: product?.category[1],
-        quantity: Math.round(Math.random() * 1000),
+        initialQuantity: stock,
+        quantity: stock,
         sold: Math.round(Math.random() * 100),
         images: product?.images,
         color: product?.variants?.find((item) => item.label === 'Color')?.variants[0] || 'BLACK',
@@ -310,5 +401,7 @@ module.exports = {
     ratingProduct,
     uploadImageProduct,
     insertData,
-    addVarriant
+    addVarriant,
+    deleteVarriant,
+    updateVarriant
 };

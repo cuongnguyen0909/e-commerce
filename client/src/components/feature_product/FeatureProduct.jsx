@@ -1,12 +1,13 @@
 import React, { useState, useEffect, memo } from 'react';
 import { ProductCard } from '..';
 import { apiGetProducts } from '../../apis/product';
-import banner1 from '../../assets/banner1.webp';
-import banner2 from '../../assets/banner2.webp';
-import banner3 from '../../assets/banner3.webp';
-import banner4 from '../../assets/banner4.webp';
+import banner1 from '../../assets/images/banner1.webp';
+import banner2 from '../../assets/images/banner2.webp';
+import banner3 from '../../assets/images/banner3.webp';
+import banner4 from '../../assets/images/banner4.webp';
 const FeatureProduct = () => {
     const [products, setProducts] = useState([]);
+    // console.log(products)
     const fetchProducts = async () => {
         try {
             const response = await apiGetProducts({ limit: 9, sort: '-totalRatings', 'price[gt]': 1000000 })
@@ -28,13 +29,17 @@ const FeatureProduct = () => {
                 feature product
             </h3>
             <div className='flex flex-wrap mt-[15px] mx-[-10px]'>
+
                 {products?.map(item => (
                     <ProductCard
                         key={item._id}
                         thumb={item?.thumb}
                         title={item?.title}
                         totalRatings={item?.totalRatings}
-                        price={item?.price} />
+                        price={item?.price}
+                        category={item?.category}
+                        pid={item?._id} />
+
                 ))}
             </div>
             <div className='flex justify-between'>

@@ -36,6 +36,7 @@ export const apiGetAllUser = (params) => axios({
     method: 'GET',
     params
 });
+
 export const apiUpdateUser = (data, uid) => axios({
     url: '/user/' + uid,
     method: 'PUT',
@@ -60,7 +61,15 @@ export const apiRemoveProdcutInCart = (pid, color) => axios({
     url: `/user/remove-cart/${pid}/${color}`,
     method: 'DELETE',
 });
+
+
 export const apiUpdatedWishlist = (pid) => axios({
     url: `/user/wishlist/${pid}`,
     method: 'PUT',
+});
+
+export const apiChangePassword = (data) => axios({
+    url: '/user/changepassword',
+    method: 'PUT',
+    data
 });

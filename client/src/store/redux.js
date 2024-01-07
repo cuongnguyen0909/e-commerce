@@ -15,7 +15,7 @@ const commonConfig = {
 //using ... to copy all properties from commonConfig to userConfig and add more properties
 const userConfig = {
     ...commonConfig,
-    whitelist: ['isLoggedIn', 'token', 'current']
+    whitelist: ['isLoggedIn', 'token', 'current', 'currentCart']
 }
 
 export const store = configureStore({

@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import clsx from 'clsx';
 
-const Select = ({ label, options = [], register, errors, id, validate, style, fullwidth, defaultValue }) => {
+const Select = ({ label, options = [], register, errors, id, validate, style, fullwidth, defaultValue, addNew }) => {
     return (
         <div className={clsx('flex flex-col h-[78px] gap-2 w-full', style)}>
             {label &&
@@ -14,7 +14,7 @@ const Select = ({ label, options = [], register, errors, id, validate, style, fu
                 className={clsx('form-select', fullwidth && 'w-full', style)}
                 id={id}
                 {...register(id, validate)}>
-                <option value=''>---</option>
+                {addNew ? <option value=''>----Add new-----</option> : <option value=''>---</option>}
                 {options?.map((item) => (
                     <option value={item.code}>{item.value}</option>
                 ))}

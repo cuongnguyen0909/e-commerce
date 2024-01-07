@@ -8,8 +8,10 @@ import { apiAddVarriant } from '../../../apis';
 import Swal from 'sweetalert2';
 import { showModal } from '../../../store/app/appSlice';
 import { useDispatch } from 'react-redux';
-
+import { useNavigate } from 'react-router-dom';
+import path from '../../../ultils/path';
 const CustomVarriant = ({ customVarriant, setCustomVarriant, render }) => {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { register, handleSubmit, formState: { errors }, watch, reset } = useForm();
     const [preview, setPreview] = useState({
@@ -49,9 +51,9 @@ const CustomVarriant = ({ customVarriant, setCustomVarriant, render }) => {
         } catch (error) { }
         setPreview(prev => ({ ...prev, images: imagesPreview }));
     }
-    const sumQuantityOfVarriants = () => {
-        return customVarriant?.quantity - customVarriant?.varriants?.reduce((total, item) => total + item.quantity, 0);
-    }
+    // const sumQuantityOfVarriants = () => {
+    //     return customVarriant?.quantity - customVarriant?.varriants?.reduce((total, item) => total + item.quantity, 0);
+    // }
     useEffect(() => {
         // console.log(watch('thumb'));
         if (watch('thumb') instanceof FileList && watch('thumb').length > 0) {
@@ -65,38 +67,44 @@ const CustomVarriant = ({ customVarriant, setCustomVarriant, render }) => {
     }, [watch('images')])
 
     const handleAddVarriant = async (data) => {
-        if (data.color === customVarriant?.color || customVarriant?.varriants?.find(item => item.color === data.color)) {
-            Swal.fire('Oops', 'Color is exist', 'info')
-        } else {
-            const formData = new FormData();
-            for (let i of Object.entries(data)) {
-                formData.append(i[0], i[1])
-            }
-            if (data.thumb) {
-                formData.append('thumb', data.thumb[0])
-            }
-            if (data.images) {
-                for (let image of data.images) {
-                    formData.append('images', image)
-                }
-            }
-            //using dispatch to show loading when create product
-            dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }))
-            const response = await apiAddVarriant(formData, customVarriant?._id);
-            dispatch(showModal({ isShowModal: false, modalChildren: null }))
-            if (response.status) {
-                window.scrollTo(0, 0);
-                toast.success('Add varriant successfully!');
-                reset();
-                setPreview({
-                    thumb: '',
-                    images: []
-                })
-            } else {
-                toast.error('Add rarriant failed!');
+        if (data.color.toString().toLowerCase() === customVarriant?.color.toString().toLowerCase()
+            || customVarriant?.varriants?.find(item => item.color.toString().toLowerCase() === data.color.toString().toLowerCase())
+        ) {
+            return Swal.fire('Oops', 'Color is exist', 'info')
+        }
+        if (data.quantity >= customVarriant?.quantity) {
+            return Swal.fire('Oops', 'Quantity must be less than quantity of product', 'info')
+        }
+        const formData = new FormData();
+        for (let i of Object.entries(data)) {
+            formData.append(i[0], i[1])
+        }
+        if (data.thumb) {
+            formData.append('thumb', data.thumb[0])
+        }
+        if (data.images) {
+            for (let image of data.images) {
+                formData.append('images', image)
             }
         }
-        console.log(sumQuantityOfVarriants())
+        //using dispatch to show loading when create product
+        dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }))
+        const response = await apiAddVarriant(formData, customVarriant?._id);
+        dispatch(showModal({ isShowModal: false, modalChildren: null }))
+        if (response.status) {
+            window.scrollTo(0, 0);
+            toast.success('Add varriant successfully!');
+            reset();
+            setPreview({
+                thumb: '',
+                images: []
+            })
+            setCustomVarriant(null);
+
+        } else {
+            toast.error('Add rarriant failed!');
+        }
+        // console.log(sumQuantityOfVarriants())
     }
     useEffect(() => {
         reset({
@@ -105,8 +113,10 @@ const CustomVarriant = ({ customVarriant, setCustomVarriant, render }) => {
             price: customVarriant?.price,
             quantity: customVarriant?.quantity,
         })
-        console.log(customVarriant)
+        // console.log(customVarriant)
     }, [customVarriant])
+
+
     return (
         <div
             className='w-full flex flex-col gap-4 relative'>
@@ -160,15 +170,7 @@ const CustomVarriant = ({ customVarriant, setCustomVarriant, render }) => {
                         errors={errors}
                         id='quantity'
                         validate={{
-                            required: 'Quantity is required',
-                            min: { value: 1, message: 'Quantity must be greater than 0' },
-                            max: {
-                                value: customVarriant?.quantity - customVarriant?.varriants?.reduce((total, item) =>
-                                    total + item.quantity, 0),
-                                message: `Quantity must be less than 
-                                ${customVarriant?.quantity - customVarriant?.varriants?.reduce((total, item) =>
-                                    total + item.quantity, 0)}`
-                            }
+                            required: 'Quantity is required'
                         }}
                         placeholder='Quantity varriant'
                         style='flex-1'

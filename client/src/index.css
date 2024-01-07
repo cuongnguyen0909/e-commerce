@@ -92,10 +92,10 @@ input::-webkit-inner-spin-button {
   font-size: 14px;
   line-height: 1rem;
   padding-right: 0.25rem;
-  padding-top: 0.15rem /* 8px */;
-  padding-right: 0.25rem /* 12px */;
-  padding-bottom: 0.75rem /* 8px */;
-  padding-left: 0.15rem /* 12px */;
+  padding-top: 8px /* 8px */;
+  padding-right: 12px /* 12px */;
+  padding-bottom: 12px /* 8px */;
+  padding-left: 12px /* 12px */;
 }
 .form-select {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
@@ -104,7 +104,6 @@ input::-webkit-inner-spin-button {
   background-size: 1.25em 1.25em;
   /* padding-right: 2.5rem 40px; */
   print-color-adjust: exact;
-  /* width: 90px; */
 }
 
 code {
@@ -121,4 +120,8 @@ code {
   align-items: center;
   justify-content: center;
   z-index: 1001; /* Đặt z-index cao hơn so với các phần tử khác */
+}
+
+.select-input-user .form-select {
+  width: 90px;
 }

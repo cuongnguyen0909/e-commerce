@@ -32,8 +32,14 @@ export { default as AdminSidebar } from './sidebar/admin/AdminSidebar';
 export { default as InputHookForm } from './inputs/InputHookForm';
 export { default as SelectHookForm } from './inputs/SelectHookForm';
 export { default as MarkdownEditor } from './inputs/MarkdownEditor';
+export { default as ReactSelect } from './inputs/ReactSelect';
+
 export { default as MemberSidebar } from './sidebar/member/MemberSidebar';
 export { default as QuickView } from './products/QuickView';
 export { default as ShowCart } from './cart/ShowCart';
 export { default as CartItemInDetailCart } from './cart/CartItemInDetailCart';
+export { default as Paypal } from './paypal/Paypal';
+export { default as Congratulation } from './common/Congratulation';
+
+export { default as OrderDetail } from './order_detail/OrderDetail';
 

@@ -4,14 +4,13 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import { apiFinalRegister, apiForgotPassword, apiLogin, apiRegister } from '../../apis';
-import background_login from '../../assets/background_login.jpg';
+import background_login from '../../assets/images/background_login.jpg';
 import { Button, InputField, Loading } from '../../components';
+import { showModal } from '../../store/app/appSlice';
 import { login } from '../../store/user/userSlice';
 import { validate } from '../../ultils/helpers';
-import path from '../../ultils/path';
 import icons from '../../ultils/icons';
-import { showModal } from '../../store/app/appSlice';
-
+import path from '../../ultils/path';
 const Login = () => {
     //define icons
     const { IoMdCloseCircleOutline, TiHomeOutline, IoReturnDownBackOutline } = icons;
@@ -64,13 +63,14 @@ const Login = () => {
     const [searchParams] = useSearchParams();
     //handle forgot password
     const handleForgotPassword = async () => {
+        dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }))
         const response = await apiForgotPassword({ email });
+        dispatch(showModal({ isShowModal: false, modalChildren: null }))
         if (response.status) {
+            window.close();
             toast.success(response.message, { theme: 'colored' })
-
         } else {
             toast.info(response.message, { theme: 'colored' })
-
         }
     }
 
@@ -162,15 +162,15 @@ const Login = () => {
             {/* //frogot password */}
             {isForgotPassword &&
                 <div className='flex flex-col absolute top-0 bottom-0 left-0 right-0
-                                animate-slide-right bg-white items-center py-8 z-50'>
-                    <div className='flex flex-col gap-4'>
-                        <label htmlFor="email">Enten your email:</label>
+                                animate-slide-right bg-white items-center py-8 z-50 '>
+                    <div className='flex flex-col gap-4 pt-14'>
+                        <label htmlFor="email" className='font-medium'>Enten your email:</label>
                         <input type="text" id='email'
                             className='w-[800px] pb-2 border-b outline-none placeholder:text-sm'
                             placeholder='example: abc@gmail.com'
                             value={email}
                             onChange={e => setEmail(e.target.value)} />
-                        <div className='flex items-center justify-end gap-4'>
+                        <div className='flex items-center justify-end gap-4 font-medium'>
                             <Button handleOnClick={handleForgotPassword} style={`px-4 py-2 rounded-md text-white my-2 bg-blue-500 text-semibold`}>
                                 Submit
                             </Button>
@@ -187,7 +187,7 @@ const Login = () => {
             <div className='absolute top-0 bottom-0 lefy-0 right-1/3 items-center justify-center flex'>
                 <Link to={`/${path.HOME}`} className='text-blue-500 hover:underline cursor-pointer text-[14px] m-auto'>
                     <TiHomeOutline className={`text-[25px] text-gray-700 hover:text-red-700 
-                    ${!isRegister ? 'absolute top-[220px] left-[20px]' : 'absolute top-[150px] left-[20px]'}`} />
+                    ${!isRegister ? 'absolute top-[240px] left-[20px]' : 'absolute top-[170px] left-[20px]'}`} />
                 </Link>
                 <div className='p-8 bg-white flex flex-col items-center rounded-md min-w-[500px] '>
                     <div className='flex items-center'>

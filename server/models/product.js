@@ -38,10 +38,18 @@ var productSchema = new mongoose.Schema(
                 thumb: String,
                 images: Array,
                 sku: String,
+                initialQuantity: Number,
                 quantity: Number,
-                sold: Number
+                sold: {
+                    type: Number,
+                    default: 0,
+                }
             }
         ],
+        initialQuantity: {
+            type: Number,
+            required: true,
+        },
         quantity: {
             type: Number,
             required: true,

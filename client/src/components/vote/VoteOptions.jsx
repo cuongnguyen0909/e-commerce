@@ -1,5 +1,5 @@
 import React, { memo, useRef, useEffect, useState } from 'react';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/images/logo.png';
 import { reviewOption } from '../../ultils/constants';
 import icons from '../../ultils/icons';
 import Button from '../buttons/Button';

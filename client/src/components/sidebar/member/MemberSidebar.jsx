@@ -1,14 +1,11 @@
-import React, { memo, Fragment, useState, useEffect } from 'react'
-import avatar from '../../../assets/avatar.png';
-import { memberSideBar } from '../../../ultils/constants';
-import { Link, NavLink } from 'react-router-dom';
 import clsx from 'clsx';
-import { IoCaretDownSharp, IoCaretForward } from "react-icons/io5";
-import path from '../../../ultils/path';
-import { useSelector } from 'react-redux';
+import React, { Fragment, memo, useState } from 'react';
 import { IoReturnDownBackSharp } from "react-icons/io5";
-
-
+import { useSelector } from 'react-redux';
+import { Link, NavLink } from 'react-router-dom';
+import avatar from '../../../assets/images/avatar.png';
+import { memberSideBar } from '../../../ultils/constants';
+import { FaHome } from "react-icons/fa";
 
 const activeStyle = 'px-4 py-2 flex items-center gap-2 text-gray-900 bg-blue-400'
 const notActiveStyle = 'px-4 py-2 flex items-center gap-2 text-gray-900 hover:bg-blue-300'
@@ -23,7 +20,7 @@ const MemberSidebar = () => {
         }
     }
     return (
-        <div className='py-4 bg-white h-full w-[250px] flex-none'>
+        <div className='py-4 bg-white h-full w-[250px] flex-none font-medium'>
             <div
                 className='w-full flex flex-col items-center justify-center py-4'>
                 <img src={current?.avatar || avatar} alt='avatar' className='w-[100px] rounded-full object-contain' />
@@ -47,8 +44,9 @@ const MemberSidebar = () => {
             </div>
             <Link
                 to={`${'/'}`}>
-                <div className='flex px-4 font-bold gap-2 text-blue-700 hover:bg-gray-400'>
-                    <IoReturnDownBackSharp size={28} />
+                <div className='flex justify-start items-center px-4 font-bold gap-2 text-main hover:bg-gray-400'>
+                    <FaHome size={24} />
+                    <IoReturnDownBackSharp size={20} />
                     Homepage
                 </div>
             </Link>

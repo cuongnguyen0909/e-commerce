@@ -8,12 +8,13 @@ const Home = () => {
     const { categories } = useSelector(state => state.app);
     // const { isLoggedIn, current } = useSelector(state => state.user);
     const { isShowModal } = useSelector(state => state.app);
+    // console.log(categories)
     return (
         <div className='mt-6 relative'>
             <div className="w-main flex ">
                 <div className="flex flex-col gap-5 w-[25%] flex-auto">
                     <HomeSidebar />
-                    {/* <DealDaily /> */}
+                    <DealDaily />
                 </div>
                 <div className="flex flex-col gap-5 pl-5 w-[75%] flex-auto">
                     <Banner />
@@ -43,7 +44,6 @@ const Home = () => {
                         <HotCollection
                             key={item._id}
                             title={item.title}
-                            image={item.image}
                             brand={item.brand}
                         />
                     ))}

@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/images/logo.png';
 import icons from '../../ultils/icons';
 import { Link } from 'react-router-dom';
 import path from '../../ultils/path';
@@ -47,6 +47,7 @@ const Header = () => {
                 </div>
                 {isLoggedIn && <Fragment>
                     <div
+                        title='View cart'
                         onClick={() => dispatch(showCart())}
                         className="flex items-center px-6 border-r justify-center gap-2 cursor-pointer">
                         <HiOutlineShoppingCart color="red" />

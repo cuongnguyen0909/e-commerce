@@ -27,6 +27,7 @@ const DetailProduct = ({ isQuickView, data }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    // const { category } = useParams();
     const params = useParams();
     const { isLoggedIn } = useSelector(state => state.user);
     const [productData, setProductData] = useState(null);
@@ -35,8 +36,8 @@ const DetailProduct = ({ isQuickView, data }) => {
     const [currentImage, setCurrentImage] = useState(null);
     const [update, setUpdate] = useState(false);
     const [varriants, setVarriants] = useState(null);
-    const [pid, setPid] = useState(null)
-    const [category, setCategory] = useState(null)
+    const [pid, setPid] = useState(null);
+    const [category, setCategory] = useState(null);
     const [currentProduct, setCurrentProduct] = useState({
         title: '',
         thumb: '',
@@ -47,14 +48,15 @@ const DetailProduct = ({ isQuickView, data }) => {
     });
     useEffect(() => {
         if (data) {
-            setPid(data.pid);
-            setCategory(data.category);
+            setPid(data?.pid);
+            setCategory(data?.category);
         } else if (params?.pid) {
             setPid(params?.pid);
             setCategory(params?.category);
         }
+        window.scrollTo(0, 0);
+    }, [data, params]);
 
-    }, [data, params])
     useEffect(() => {
         if (varriants) {
             setCurrentProduct({
@@ -64,7 +66,7 @@ const DetailProduct = ({ isQuickView, data }) => {
                 price: productData?.varriants?.find(item => item.sku === varriants)?.price,
                 quantity: productData?.varriants?.find(item => item.sku === varriants)?.quantity,
                 color: productData?.varriants?.find(item => item.sku === varriants)?.color,
-            })
+            });
         } else {
             setCurrentProduct({
                 title: productData?.title,
@@ -73,7 +75,7 @@ const DetailProduct = ({ isQuickView, data }) => {
                 price: productData?.price,
                 quantity: productData?.quantity,
                 color: productData?.color,
-            })
+            });
         }
     }, [varriants, productData])
     // define function fetchProductData
@@ -100,7 +102,7 @@ const DetailProduct = ({ isQuickView, data }) => {
     const handleChangeQuantity = useCallback((number) => {
         if (number < 1) return;
         setQuantity(number);
-    }, [quantity])
+    }, [quantity]);
 
     const handleClickImage = (e, item) => {
         e.stopPropagation();
@@ -125,7 +127,7 @@ const DetailProduct = ({ isQuickView, data }) => {
                         search: createSearchParams({ redirect: location.pathname }).toString()
                     });
                 }
-            })
+            });
         }
         const response = await apiUpdateCart({
             pid,
@@ -171,7 +173,9 @@ const DetailProduct = ({ isQuickView, data }) => {
             </div>}
 
             {/* Product Detail */}
-            <div className={clsx('bg-white m-auto mt-4 flex', isQuickView ? 'max-w-[800px] h-[600px] pt-4 gap-6' : 'w-main gap-6')}>
+            <div className={clsx('bg-white m-auto mt-4 flex', isQuickView ? 'max-w-[800px] h-[600px] pt-4 gap-6' : 'w-main gap-6')}
+                onClick={e => e.stopPropagation()}
+            >
 
                 {/* Product Image */}
                 <div className={clsx('flex flex-col gap-4 w-2/5 px-5', isQuickView && 'w-[395px]')}>
@@ -180,10 +184,10 @@ const DetailProduct = ({ isQuickView, data }) => {
                             smallImage: {
                                 alt: productData?.title,
                                 isFluidWidth: true,
-                                src: currentProduct?.thumb || currentImage,
+                                src: currentImage,
                             },
                             largeImage: {
-                                src: currentProduct?.thumb || currentImage,
+                                src: currentImage,
                                 width: 1800,
                                 height: 1500
                             }
@@ -193,7 +197,7 @@ const DetailProduct = ({ isQuickView, data }) => {
                     {/* Image Slider */}
                     <div className={clsx(isQuickView ? 'w-[355px]' : 'w-[458px]')}>
                         <Slider {...settings} className={clsx(isQuickView ? 'image-slider flex gap-2 justify-between' : 'image-slider flex gap-2 justify-between')}>
-                            {!varriants && productData?.images?.map((item, index) => (
+                            {!varriants && currentProduct?.images?.map((item, index) => (
                                 <div className='w-full' key={index}>
                                     <img
                                         onClick={e => handleClickImage(e, item)}

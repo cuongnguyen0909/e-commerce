@@ -16,3 +16,8 @@ export const apiGetOrdersByAdmin = (params) => axios({
     method: 'GET',
     params
 });
+export const apiUpdateStatusOrder = (oid, data) => axios({
+    url: '/order/status/' + oid,
+    method: 'PUT',
+    data
+});

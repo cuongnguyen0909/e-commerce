@@ -11,7 +11,6 @@ const CreateProduct = () => {
     const dispatch = useDispatch();
     const { categories } = useSelector(state => state.app);
     const { register, formState: { errors }, reset, handleSubmit, watch } = useForm();
-
     const [payload, setPayload] = useState({
         description: ''
     })

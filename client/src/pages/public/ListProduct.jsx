@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Mansonry from 'react-masonry-css';
 import { createSearchParams, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { apiGetProducts, apiGetCategories } from '../../apis';
@@ -14,6 +14,7 @@ const breakpointColumnsObj = {
     500: 1
 }
 const ListProduct = () => {
+    const titleRef = useRef(null);
     const navigate = useNavigate();
     //define params
     const { category } = useParams();
@@ -29,7 +30,16 @@ const ListProduct = () => {
 
     const [sort, setSort] = useState('');
     // console.log(params.entries())
+
     const fetchProductsByCategory = async (queries) => {
+        if (category && category !== 'products') {
+            queries.category = category;
+        } else {
+            delete queries.category;
+        }
+        if (!category) {
+            queries.category = 'products';
+        }
         const response = await apiGetProducts(queries);
         if (response.status) {
             setProducts(response)
@@ -40,7 +50,7 @@ const ListProduct = () => {
     useEffect(() => {
         const queries = Object.fromEntries([...params]);
         // queries.color = queries.color;
-        queries.category = category;
+        // queries.category = category;
         let priceQuery = {};
         if (queries.from && queries.to) {
             priceQuery = {
@@ -62,7 +72,9 @@ const ListProduct = () => {
         delete queries.to;
         const finalQueries = { ...priceQuery, ...queries };
         fetchProductsByCategory(finalQueries)
-    }, [params])
+        window.scrollTo(0, 0);
+        titleRef?.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [params, category])
 
     // console.log(categories?.find(item => item.title.toLowerCase() === category)?.brand)
     //define function change active filter
@@ -91,7 +103,7 @@ const ListProduct = () => {
         <div className='w-full'>
 
             {/* Breacrumd */}
-            <div className='h-[81px] flex justify-center items-center bg-gray-100'>
+            <div ref={titleRef} className='h-[81px] flex justify-center items-center bg-gray-100'>
                 <div className='w-main'>
                     <h3 className='font-semibold uppercase'>{category}</h3>
                     <Breadcrumb category={category} />
@@ -113,6 +125,12 @@ const ListProduct = () => {
                             activeClick={activeClick}
                             changeActiveFilter={changeActiveFilter}
                             colors={colors}
+                        />
+                        <FilterProduct
+                            name='Category'
+                            activeClick={activeClick}
+                            changeActiveFilter={changeActiveFilter}
+                            categories={categories?.map(item => item.title)}
                         />
                         <FilterProduct
                             name='Brand'
@@ -145,6 +163,7 @@ const ListProduct = () => {
                     {products?.products?.map((item) => (
                         <Product
                             key={item._id}
+                            pid={item._id}
                             productData={item}
                             isNew={false}
                             normal={true} />

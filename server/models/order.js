@@ -4,28 +4,29 @@ const mongoose = require('mongoose'); // Erase if already required
 var orderchema = new mongoose.Schema({
     products: [
         {
-            product: {
-                type: mongoose.Types.ObjectId,
-                ref: 'Product',
-            },
-            count: Number,
+            product: { type: mongoose.Types.ObjectId, ref: 'Product' },
+            quantity: Number,
             color: String,
-        },
+            price: Number,
+            thumb: String,
+            title: String,
+        }
     ],
     status: {
         type: String,
         default: 'Processing',
-        enum: ['Cancelled', 'Processing', 'Succeeded'],
     },
     total: Number,
-    coupon: {
-        type: mongoose.Types.ObjectId,
-        ref: 'Coupon',
-    },
     orderBy: {
         type: mongoose.Types.ObjectId,
         ref: 'User',
     },
+    paymentMethod: {
+        type: String,
+        default: 'COD',
+    },
+}, {
+    timestamps: true,
 });
 
 //Export the model

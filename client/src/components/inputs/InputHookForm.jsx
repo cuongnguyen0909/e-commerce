@@ -33,7 +33,7 @@ const InputHookForm = ({
                 {...register(id, validate)}
                 disabled={disabled}
                 placeholder={placeholder}
-                className={clsx('form-input', fullwidth && 'w-full', style)}
+                className={clsx('form-input placeholder:italic', fullwidth && 'w-full', style)}
                 readOnly={readOnly}
             />
             {errors[id] && (

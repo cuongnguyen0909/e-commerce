@@ -1,13 +1,13 @@
-import icons from "./icons";
-import path from "./path";
-import { RxDashboard } from "react-icons/rx";
 import { GrGroup } from "react-icons/gr";
-import { RiProductHuntLine } from "react-icons/ri";
 import { MdProductionQuantityLimits } from "react-icons/md";
+import { RiProductHuntLine } from "react-icons/ri";
+import { RxDashboard } from "react-icons/rx";
 import { TbBrandReactNative } from "react-icons/tb";
-
-
-const { IoShieldHalf, CiDeliveryTruck, CiGift, MdOutlineReply, MdOutlineTty } = icons;
+import path from "./path";
+import { AiOutlineShoppingCart } from "react-icons/ai";
+import { MdHistory } from "react-icons/md";
+import { MdPlaylistAddCheckCircle } from "react-icons/md";
+import { FaExchangeAlt } from "react-icons/fa";
 
 export const navigation = [
     {
@@ -18,7 +18,7 @@ export const navigation = [
     {
         id: 2,
         value: 'PRODUCTS',
-        path: `${path.PRODUCT}`
+        path: `${path.PRODUCTS}`
     },
     {
         id: 3,
@@ -213,23 +213,25 @@ export const adminSideBar = [
 ]
 export const memberSideBar = [
     {
-        id: 1, type: 'SINGLE', text: 'Personal', path: `/${path.MEMBER}/${path.PERSONAL}`, icon: <RxDashboard />
+        id: 1, type: 'SINGLE', text: 'Profile', path: `/${path.MEMBER}/${path.PERSONAL}`, icon: <RxDashboard size={20} />
     },
     {
-        id: 2, type: 'SINGLE', text: 'My cart', path: `/${path.MEMBER}/${path.MY_CART}`, icon: <GrGroup />
+        id: 2, type: 'SINGLE', text: 'My cart', path: `/${path.MEMBER}/${path.MY_CART}`, icon: <AiOutlineShoppingCart size={20} />
     },
     {
-        id: 3, type: 'SINGLE', text: 'Purchase history', path: `/${path.MEMBER}/${path.PURCHASE_HISTORY}`, icon: <GrGroup />
+        id: 3, type: 'SINGLE', text: 'Purchase history', path: `/${path.MEMBER}/${path.PURCHASE_HISTORY}`, icon: <MdHistory size={24} />
     },
     {
-        id: 4, type: 'SINGLE', text: 'Wishlist', path: `/${path.MEMBER}/${path.WISHLIST}`, icon: <GrGroup />
-    }
-
+        id: 4, type: 'SINGLE', text: 'Wishlist', path: `/${path.MEMBER}/${path.WISHLIST}`, icon: <MdPlaylistAddCheckCircle size={24} />
+    },
+    {
+        id: 5, type: 'SINGLE', text: 'Change password', path: `/${path.MEMBER}/${path.CHANGE_PASSWORD}`, icon: <FaExchangeAlt size={20} />
+    },
 ]
 
 export const roles = [
     {
-        code: 99, value: 'User'
+        code: 99, value: 'Member'
     },
     {
         code: 2002, value: 'Admin'
@@ -242,5 +244,20 @@ export const blockUser = [
     },
     {
         code: false, value: 'Active'
+    }
+]
+
+export const statusOrder = [
+    { label: 'Processing', value: 'Processing' },
+    { label: 'Cancelled', value: 'Cancelled' },
+    { label: 'Succeeded', value: 'Succeeded' }
+]
+
+export const paymentMethod = [
+    {
+        code: 'COD', value: 'Cash On Delivery (COD)'
+    },
+    {
+        code: 'PayPal', value: 'PayPal'
     }
 ]

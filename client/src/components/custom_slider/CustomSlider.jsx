@@ -18,16 +18,16 @@ const CustomSlider = ({ activeTab, bestSeller, newestProduct, relatedProduct, no
                 <Slider {...settings} className='custom-slider relative'>
                     {activeTab === 1
                         ? bestSeller?.map(item => (
-                            <Product key={item._id} productData={item} isNew={false} />
+                            <Product key={item._id} pid={item._id} productData={item} isNew={false} />
                         ))
                         : newestProduct?.map(item => (
-                            <Product key={item._id} productData={item} isNew={true} />
+                            <Product key={item._id} pid={item._id} productData={item} isNew={true} />
                         ))}
                 </Slider>
             ) : (
                 <Slider {...settings} className='custom-slider relative' >
                     {relatedProduct?.map(item => (
-                        <Product key={item._id} productData={item} normal={normal} />
+                        <Product key={item._id} pid={item._id} productData={item} normal={normal} />
                     ))}
                 </Slider>
             )}

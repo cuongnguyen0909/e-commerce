@@ -2,9 +2,11 @@ const User = require('../models/user');
 const asyncHandler = require('express-async-handler');
 const { generateAccessToken, generateRefreshToken } = require('../middlewares/jwt');
 const jwt = require('jsonwebtoken');
-const sendMail = require('../ultils/sendMail');
+const sendMail = require('../utils/sendMail');
 const crypto = require('crypto');
 const makeToken = require('uniqid');
+const Product = require('../models/product');
+const mongoose = require('mongoose');
 
 const registerUser = asyncHandler(async (req, res) => {
     const { email, password, firstName, lastName, mobile } = req.body;
@@ -57,6 +59,68 @@ const finalRegister = asyncHandler(async (req, res) => {
 })
 //refreshToken dung de cap  moi 1 cai accessToken
 //accessToken dung de xac thuc nguoi dung, phan quyen nguoi dung
+
+//api to change paasword
+const changePassword = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    const { password, newPassword, reNewPassword } = req.body;
+    console.log(password, newPassword, reNewPassword)
+    if (!password) {
+        return res.status(400).json({
+            status: false,
+            message: 'Password is required',
+        });
+    }
+    if (!newPassword) {
+        return res.status(400).json({
+            status: false,
+            message: 'New password is required',
+        });
+    }
+    if (!reNewPassword) {
+        return res.status(400).json({
+            status: false,
+            message: 'Confirm new password is required',
+        });
+    }
+
+    const user = await User.findOne({ _id });
+    // console.log(user)
+    if (!user) {
+        return res.status(400).json({
+            status: false,
+            message: 'User not found',
+        });
+    }
+
+    if (!await user.isCorrectPassword(password)) {
+        return res.status(400).json({
+            status: false,
+            message: 'Password not matched',
+        });
+    }
+
+    if (newPassword !== reNewPassword) {
+        return res.status(400).json({
+            status: false,
+            message: 'Password not matched',
+        });
+    }
+
+    if (password === newPassword) {
+        return res.status(400).json({
+            status: false,
+            message: 'New password must be different from old password',
+        });
+    }
+    user.password = newPassword;
+    await user.save()
+    return res.status(200).json({
+        status: user ? true : false,
+        message: user ? 'Change password successfully' : 'Something went wrong. Please check again.',
+    });
+})
+
 const login = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -95,13 +159,16 @@ const login = asyncHandler(async (req, res) => {
 //GET A USER
 const getCurrentUser = asyncHandler(async (req, res) => {
     const { _id } = req.user;
-    const user = await User.findOne({ _id }).select('-refreshToken -password').populate({
-        path: 'cart',
-        populate: {
-            path: 'product',
-            select: 'title thumb price'
-        }
-    })
+    const user = await User.findOne({ _id }).select('-refreshToken -password')
+        .populate({
+            path: 'cart',
+            populate: ({
+                path: 'product',
+                select: 'title thumb price quantity'
+            })
+        })
+        .populate('wishlist', 'title thumb price color')
+
     return res.status(200).json({
         status: user ? true : false,
         user: user ? user : 'User not found',
@@ -121,7 +188,7 @@ const deleteUser = asyncHandler(async (req, res) => {
 const updateUser = asyncHandler(async (req, res) => {
     // console.log(req.file)
     const { _id } = req.user;
-    const { firstName, lastName, email, mobile } = req.body;
+    const { firstName, lastName, email, mobile, address } = req.body;
     if (req.file) {
         req.body.avatar = req.file.path;
     }
@@ -129,7 +196,7 @@ const updateUser = asyncHandler(async (req, res) => {
     if (!_id || Object.keys(req.body).length === 0) throw new Error('Missing Input');
     const response = await User.findByIdAndUpdate(_id,
         {
-            firstName, lastName, email, mobile, avatar: req.body.avatar,
+            firstName, lastName, email, mobile, avatar: req.body.avatar, address
         }, { new: true, }).select('-refreshToken -password -role');
     return res.status(200).json({
         status: response ? true : false,
@@ -358,13 +425,46 @@ const updateAddress = asyncHandler(async (req, res) => {
         updatedUser: response ? response : 'Can not update new address',
     });
 });
+
+
 const updateCart = asyncHandler(async (req, res) => {
     const { _id } = req.user;
-    const { pid, quantity = 1, color, price, thumb, title } = req.body;
+    const { pid, quantity, color, price, thumb, title } = req.body;
     if (!pid || !color) throw new Error('Missing input');
     const userCart = await User.findById(_id).select('cart');
-    const alreadyProduct = userCart?.cart?.find((item) => item?.product.toString() === pid && item?.color === color);
-    if (alreadyProduct) {
+    // const varriants = await Product.findById(pid).select('varriants');
+    let isChange = false;
+    // console.log(userCart)
+    const alreadyProduct = userCart?.cart?.find((item) => item?.product.toString() === pid && item?.color.toLowerCase() === color.toLowerCase());
+    const product = await Product.findById(pid);
+    // console.log(varriants)
+    product?.varriants?.forEach(async (item) => {
+        if (item.color.toLowerCase() === color.toLowerCase()) {
+            item.sold = quantity;
+            item.quantity = item.initialQuantity - item.sold;
+        } else {
+            product.sold = quantity;
+            product.quantity = product.initialQuantity - product.sold;
+        }
+    })
+    await product.save();
+
+    if (!alreadyProduct) {
+        const response = await User.findByIdAndUpdate(
+            _id,
+            {
+                $push: { cart: { product: pid, quantity, color, price, thumb, title } },
+            },
+            { new: true },
+        );
+        return res.json({
+            status: response ? true : false,
+            message: response ? 'Updated your cart successfully' : 'Can not update cart',
+        });
+    } else {
+        product.sold = quantity;
+        product.quantity = product.initialQuantity - product.sold;
+        await product.save();
         const response = await User.updateOne(
             {
                 cart: { $elemMatch: alreadyProduct },
@@ -379,29 +479,24 @@ const updateCart = asyncHandler(async (req, res) => {
             },
             { new: true, },
         );
-        return res.json({
-            status: response ? true : false,
-            message: response ? 'Updated your cart successfully' : 'Can not update cart',
-        });
 
-    } else {
-        const response = await User.findByIdAndUpdate(
-            _id,
-            {
-                $push: { cart: { product: pid, quantity, color, price, thumb, title } },
-            },
-            { new: true },
-        );
         return res.json({
             status: response ? true : false,
             message: response ? 'Updated your cart successfully' : 'Can not update cart',
         });
     }
+
 });
+
+
+
 const removeProductInCart = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     const { pid, color } = req.params;
     const userCart = await User.findById(_id).select('cart');
+    const product = await Product.findById(pid);
+
+
     const alreadyProduct = userCart?.cart?.find((item) => item.product.toString() === pid && item.color === color);
     if (!alreadyProduct) {
         return res.json({
@@ -409,6 +504,18 @@ const removeProductInCart = asyncHandler(async (req, res) => {
             message: 'Product not found in cart',
         });
     }
+
+    product.varriants.map(async (item) => {
+        if (item.color.toLowerCase() === color.toLowerCase()) {
+            item.sold = item.sold - Number(userCart?.cart?.find((itemCart) => itemCart.color.toLowerCase() === item?.color.toLowerCase())?.quantity);
+            item.quantity = item.initialQuantity - item.sold;
+        } else {
+            product.sold = product?.sold - Number(userCart?.cart?.find((itemCart) => itemCart.color.toLowerCase() !== item?.color.toLowerCase())?.quantity);
+            product.quantity = product?.initialQuantity - product.sold;
+        }
+    })
+    await product.save();
+
     const response = await User.findByIdAndUpdate(
         _id,
         {
@@ -421,6 +528,33 @@ const removeProductInCart = asyncHandler(async (req, res) => {
         message: response ? 'Updated your cart successfully' : 'Can not update cart',
     });
 
+});
+const updateWishlist = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    const { pid } = req.params;
+    const user = await User.findById(_id);
+    const alreadyProduct = user.wishlist?.find((item) => item.toString() === pid);
+    if (alreadyProduct) {
+        const response = await User.findByIdAndUpdate(
+            _id,
+            { $pull: { wishlist: pid } },
+            { new: true }
+        )
+        return res.json({
+            status: response ? true : false,
+            message: response ? 'Updated your wishlist successfully' : 'Can not update wishlist',
+        });
+    } else {
+        const response = await User.findByIdAndUpdate(
+            _id,
+            { $push: { wishlist: pid } },
+            { new: true }
+        )
+        return res.json({
+            status: response ? true : false,
+            message: response ? 'Updated your wishlist successfully' : 'Can not update wishlist',
+        });
+    }
 });
 
 module.exports = {
@@ -438,5 +572,7 @@ module.exports = {
     updateAddress,
     updateCart,
     finalRegister,
-    removeProductInCart
+    removeProductInCart,
+    updateWishlist,
+    changePassword
 };

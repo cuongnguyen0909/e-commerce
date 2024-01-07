@@ -19,7 +19,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Modal, ShowCart } from './components';
 import { AdminLayout, CreateProduct, Dashboard, ManageCategory, ManageOrder, ManageProduct, ManageUser } from './pages/admin';
-import { MemberLayout, Personal, PurchaseHistory, Checkout, DetailCart, Wishlist } from './pages/member';
+import { MemberLayout, Personal, PurchaseHistory, Checkout, DetailCart, Wishlist, ChangePassword } from './pages/member';
 import { getCategories } from './store/app/appAction';
 import { showCart } from './store/app/appSlice';
 import path from './ultils/path';
@@ -67,6 +67,7 @@ function App() {
                     <Route path={path.MY_CART} element={<DetailCart />} />
                     <Route path={path.PURCHASE_HISTORY} element={<PurchaseHistory />} />
                     <Route path={path.WISHLIST} element={<Wishlist />} />
+                    <Route path={path.CHANGE_PASSWORD} element={<ChangePassword />} />
                 </Route>
                 <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
                 <Route path={path.LOGIN} element={<Login />} />

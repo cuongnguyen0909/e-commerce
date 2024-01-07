@@ -46,10 +46,9 @@ var userSchema = new mongoose.Schema(
                 title: String,
             },
         ],
-        //khoa phu den ban Address
         address: {
-            type: Array,
-            default: [],
+            type: String,
+            default: '',
         },
         //khoa phu den bang Product
         wishlist: [
@@ -67,17 +66,17 @@ var userSchema = new mongoose.Schema(
         },
         //dung cho chuc nang quen mat khau
         passwordChangeAt: {
-            type: String,
+            type: Date,
         },
         passwordResetToken: {
             type: String,
         },
         passwordResetExpired: {
-            type: String,
+            type: Date,
         },
-        registerToken: {
-            type: String,
-        }
+        // registerToken: {
+        //     type: String,
+        // }
     },
     { timestamps: true },
 );

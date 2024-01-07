@@ -123,7 +123,7 @@ const ManageUser = () => {
                 <form onSubmit={handleSubmit(handleUpdateUser)}>
                     {editUser && <Button type='submit'>Update</Button>}
                     <table className='table-auto mt-6 text-left w-full'>
-                        <thead className='font-bold bg-gray-600 text-[13px] border-blue-300 text-center text-white'>
+                        <thead className='font-bold bg-sky-700 text-[15px] border-blue-300 text-center text-white'>
                             <tr className='border border-gray-500'>
                                 <th className='text-left px-4 py-2'>#</th>
                                 <th className='text-left px-4 py-2'>Email</th>
@@ -136,58 +136,25 @@ const ManageUser = () => {
                                 <th className='text-left px-4 py-2'>Actions</th>
                             </tr>
                         </thead>
-                        <tbody className=''>
+                        <tbody className='font-medium'>
                             {usersData?.users?.map((item, index) => (
-                                <tr key={item?._id} className='border border-gray-400 text-[14px]'>
+                                <tr key={item?._id} className='border border-gray-400 text-[14px] h-[80px]'>
                                     <td className='py-2 px-4'>{index + 1}</td>
                                     <td className='py-2 px-2'>
-                                        {editUser?._id === item._id
-                                            ? <InputHookForm
-                                                register={register}
-                                                fullwidth
-                                                errors={errors}
-                                                defaultValue={item?.email}
-                                                id={'email'}
-                                                validate={{
-                                                    required: "Required",
-                                                    pattern: {
-                                                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                                        message: "invalid email address"
-                                                    }
-                                                }}
-                                            />
-                                            : <span>{item?.email}</span>}
+                                        <span>{item?.email}</span>
                                     </td>
                                     <td className='py-2 px-4'>
-                                        {editUser?._id === item._id
-                                            ? <InputHookForm
-                                                register={register}
-                                                fullwidth
-                                                errors={errors}
-                                                defaultValue={item?.firstName}
-                                                id={'firstName'}
-                                                validate={{ required: 'First name is required' }}
-                                            />
-                                            : <span>{item?.firstName}</span>}
+                                        <span>{item?.firstName}</span>
                                     </td>
                                     <td className='py-2 px-4'>
-                                        {editUser?._id === item._id
-                                            ? <InputHookForm
-                                                register={register}
-                                                fullwidth
-                                                errors={errors}
-                                                defaultValue={item?.lastName}
-                                                id={'lastName'}
-                                                validate={{ required: 'Last name is required' }}
-                                            />
-                                            : <span>{item?.lastName}</span>}
+                                        <span>{item?.lastName}</span>
                                     </td>
-
-                                    <td className='py-2 px-6'>
+                                    <td className='py-2 px-6 select-input-user text-left'>
                                         {editUser?._id === item._id
                                             ? <SelectHookForm
                                                 register={register}
                                                 fullwidth
+                                                style='flex justify-center items-center'
                                                 errors={errors}
                                                 defaultValue={item?.role}
                                                 id={'role'}
@@ -199,50 +166,40 @@ const ManageUser = () => {
                                             </span>}
                                     </td>
                                     <td className='py-2 px-4'>
-                                        {editUser?._id === item._id
-                                            ? <InputHookForm
-                                                register={register}
-                                                fullwidth
-                                                errors={errors}
-                                                id={'mobile'}
-                                                defaultValue={item?.mobile}
-                                                validate={{
-                                                    required: 'Mobile is required',
-                                                    pattern: {
-                                                        value: /^[62|0]+\d{10}$/,
-                                                        message: "Invalid mobile number"
-                                                    }
-                                                }}
-                                            />
-                                            : <span>{item?.mobile}</span>}
+
+                                        <span>{item?.mobile}</span>
                                     </td>
-                                    <td className='py-2 px-4 '>
+                                    <td className='py-2 px-4 select-input-user'>
                                         {editUser?._id === item?._id
                                             ? <SelectHookForm
                                                 register={register}
                                                 fullwidth
+                                                style='flex justify-center items-center'
                                                 errors={errors}
                                                 defaultValue={item?.isBlocked}
-                                                validate={{ required: 'Status is required' }}
                                                 id={'isBlocked'}
                                                 options={blockUser} />
                                             : <span>{item?.isBlocked ? 'Blocked' : 'Active'}
                                             </span>}
                                     </td>
                                     <td className='py-2 px-4'>{moment(item?.createdAt).format('DD/MM/YYYY')}</td>
-                                    <td className='py-2 px-4 flex justify-center items-center'>
+                                    <td className='py-2 px-4'>
                                         {editUser?._id === item._id
                                             ? <span
+                                                title='Back'
                                                 onClick={() => setEditUser(null)}
-                                                className='px-2 text-orange-600 hover:underline inline-block cursor-pointer'>
-                                                <FaBackspace size={20} /></span>
+                                                className='px-2 text-orange-600 hover:underline inline-block cursor-pointer m-auto'>
+                                                <FaBackspace size={20} />
+                                            </span>
                                             : <span
+                                                title='Edit'
                                                 onClick={() => setEditUser(item)}
-                                                className='px-2 text-orange-600 hover:underline inline-block cursor-pointer'>
+                                                className='px-2 text-orange-600 hover:underline inline-block cursor-pointer m-auto'>
                                                 <FaPen size={20} /></span>}
                                         <span
+                                            title='Delete'
                                             onClick={() => handleDeleteUser(item._id)}
-                                            className='px-2 text-orange-600 hover:underline inline-block cursor-pointer'>
+                                            className='px-2 text-orange-600 hover:underline inline-block cursor-pointer m-auto'>
                                             <IoIosRemoveCircle size={20} /></span>
                                     </td>
                                 </tr>

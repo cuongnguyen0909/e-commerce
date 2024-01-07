@@ -14,10 +14,12 @@ const ShowCart = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { currentCart } = useSelector(state => state.user);
+    const totalPrice = currentCart?.reduce((sum, item) => sum + Number(item?.price) * Number(item?.quantity), 0);
     // console.log(current)
     const updateCart = async (pid, color) => {
         const response = await apiRemoveProdcutInCart(pid, color);
         if (response.status) {
+            toast.success('Remove product in cart successfully');
             dispatch(getCurrent());
         } else {
             toast.error(response.message);
@@ -54,6 +56,7 @@ const ShowCart = () => {
                             </div>
                         </div>
                         <span
+                            title='Remove product'
                             onClick={() => updateCart(item.product?._id, item?.color)}
                             className='h-8 w-8 rounded-full flex justify-center items-center hover:bg-gray-700 cursor-pointer'>
                             <IoRemoveCircleOutline size={16} />
@@ -68,7 +71,7 @@ const ShowCart = () => {
             < div className='row-span-2 h-full flex flex-col justify-between' >
                 <div className='flex items-center justify-between pt-4 border-t'>
                     <span>Subtotal: </span>
-                    <span>{formatMoney(currentCart?.reduce((sum, item) => sum + Number(item?.price) * Number(item?.quantity), 0))}</span>
+                    <span>{formatMoney(totalPrice) + ' VND'}</span>
                 </div>
                 <span className='text-xs italic text-gray-600'>
                     Shipping, taxes, and discounts calculated at checkout.

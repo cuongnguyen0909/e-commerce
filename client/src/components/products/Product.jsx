@@ -6,26 +6,33 @@ import { createSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import { SelectOption } from '..';
-import { apiUpdateCart } from '../../apis';
-import label from '../../assets/label.webp';
-import label1 from '../../assets/label1.png';
+import { apiRemoveProdcutInCart, apiUpdateCart, apiUpdatedWishlist } from '../../apis';
+import label from '../../assets/images/label.webp';
+import label1 from '../../assets/images/label1.png';
 import { DetailProduct } from '../../pages/public';
 import { showModal } from '../../store/app/appSlice';
 import { getCurrent } from '../../store/user/userAction';
 import { formatMoney, renderStarFromNumber } from '../../ultils/helpers';
 import icons from '../../ultils/icons';
 import path from '../../ultils/path';
-const Product = ({ productData, isNew, normal }) => {
+import clsx from 'clsx';
+const Product = ({ productData, isNew, normal, classname }) => {
     const location = useLocation();
     const [isShowOption, setIsShowOption] = useState(false);
     const { FaHeart, IoEyeSharp } = icons;
-    const { isLoggedIn, current } = useSelector(state => state.user);
+    const { isLoggedIn, current, currentCart } = useSelector(state => state.user);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const handleClickOption = async (e, type) => {
         e.stopPropagation();
         if (type === 'WISHLIST') {
-            alert('Add to wishlist');
+            const response = await apiUpdatedWishlist(productData?._id);
+            if (response.status) {
+                dispatch(getCurrent());//to updated cart
+                toast.success(response.message);
+            } else {
+                toast.error(response.message);
+            }
         }
         if (type === 'QUICK_VIEW') {
             dispatch(showModal({
@@ -36,6 +43,9 @@ const Product = ({ productData, isNew, normal }) => {
         }
         if (type === 'CART') {
             // console.log(current, productData)
+            // console.log(current)
+            // console.log(current?.cart)
+
             if (!isLoggedIn) {
                 return Swal.fire({
                     title: 'Please login to continue!',
@@ -61,8 +71,9 @@ const Product = ({ productData, isNew, normal }) => {
                 quantity: 1,
                 price: productData?.price,
                 thumb: productData?.thumb,
-                title: productData?.title,
+                title: productData?.title
             });
+
             if (response.status) {
                 toast.success(response.message);
                 dispatch(getCurrent());
@@ -71,9 +82,10 @@ const Product = ({ productData, isNew, normal }) => {
             }
         }
     }
+
     return (
-        <div className='w-full text-base px-[10px] relative'>
-            <div className='w-full border p-[15px] flex flex-col items-center cursor-pointer'
+        <div className={clsx('w-full text-base px-[10px] relative', classname)}>
+            <div className={clsx('w-full border p-[15px] flex flex-col items-center cursor-pointer')}
                 onClick={() => navigate(`/${productData?.category}/${productData?._id}/${productData?.title}`)}
                 onMouseEnter={e => {
                     e.stopPropagation();
@@ -87,20 +99,28 @@ const Product = ({ productData, isNew, normal }) => {
                     {isShowOption &&
                         <div
                             className='absolute bottom-[20px] gap-3 left-0 right-0 flex justify-center items-center animate-slide-top'>
-                            <span
-                                title='Add to wishlist'
-                                onClick={(e) => handleClickOption(e, 'WISHLIST')}>
-                                <SelectOption icon={<FaHeart size={20} />} />
-                            </span>
+                            {current?.wishlist?.some(item => item?._id === productData?._id)
+                                ? <span
+                                    title='Add to wishlist'
+                                    onClick={(e) => handleClickOption(e, 'WISHLIST')}>
+                                    <SelectOption isAddTiWishlist icon={<FaHeart size={20} color='red' />} />
+                                </span>
+                                : <span
+                                    title='Add to wishlist'
+                                    onClick={(e) => handleClickOption(e, 'WISHLIST')}>
+                                    <SelectOption icon={<FaHeart size={20} />} />
+                                </span>}
                             <span
                                 title='Quick view'
                                 onClick={(e) => handleClickOption(e, 'QUICK_VIEW')}>
                                 <SelectOption icon={<IoEyeSharp size={20} />} />
                             </span>
-                            {current?.cart?.some(item => item.product === productData?._id.toString())
+
+                            {current?.cart?.some(item => item?.product?._id === productData?._id)
                                 ? <span
-                                    title='Added to cart'>
-                                    <SelectOption isAddToCart icon={<BsCartCheckFill size={20} color='green' />} />
+                                    title='Added to cart'
+                                    onClick={(e) => e.stopPropagation()} >
+                                    <SelectOption isAddToCart icon={<BsCartCheckFill size={20} color='blue' />} />
                                 </span>
                                 : <span
                                     title='Add to cart'
@@ -114,10 +134,10 @@ const Product = ({ productData, isNew, normal }) => {
                         <img
                             src={isNew ? label1 : label}
                             alt="label"
-                            className='absolute top-[-10px] left-[-37px] w-[90px] h-[35px] object-cover' />}
+                            className='absolute top-[-10px] left-[-50px] w-[110px] h-[55px] object-contain' />}
                     {isNew ?
-                        <span className='font-medium absolute top-[-10px] left-[-10px] text-white'>New</span>
-                        : <span className='font-medium absolute top-[-10px] left-[-10px] text-white'>Hot</span>}
+                        <span className='absolute font-medium top-[0px] left-[-10px] text-white'>New</span>
+                        : <span className=' absolute top-[0px] font-medium left-[-10px] text-white'>Hot</span>}
                 </div>
                 <div className='flex flex-col gap-1 mt-[15px] items-start w-full '>
                     <span className='line-clamp-1'>
