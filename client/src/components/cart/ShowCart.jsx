@@ -24,6 +24,7 @@ const ShowCart = () => {
         } else {
             toast.error(response.message);
         }
+        console.log(currentCart)
     }
     return (
         <div
@@ -57,7 +58,7 @@ const ShowCart = () => {
                         </div>
                         <span
                             title='Remove product'
-                            onClick={() => updateCart(item.product?._id, item?.color)}
+                            onClick={() => updateCart(item?.product?._id, item?.color)}
                             className='h-8 w-8 rounded-full flex justify-center items-center hover:bg-gray-700 cursor-pointer'>
                             <IoRemoveCircleOutline size={16} />
                         </span>

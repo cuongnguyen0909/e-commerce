@@ -13,10 +13,9 @@ const BestSeller = () => {
     const [activeTab, setActiveTab] = useState(1);
     const dispatch = useDispatch();
     const { newProduct } = useSelector(state => state.products);
-    const { isShowModal } = useSelector(state => state.app);
     const fetchProducts = async () => {
         try {
-            const response = await apiGetProducts({ sort: '-cretedAt', 'price[gt]': '8000000' });
+            const response = await apiGetProducts({ sort: '-createdAt', 'price[gt]': '8000000' });
             if (response.status) {
                 setBestSeller(response.products);
             }

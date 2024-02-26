@@ -249,8 +249,8 @@ export const blockUser = [
 
 export const statusOrder = [
     { label: 'Processing', value: 'Processing' },
-    { label: 'Cancelled', value: 'Cancelled' },
-    { label: 'Succeeded', value: 'Succeeded' }
+    { label: 'Canceled', value: 'Canceled' },
+    { label: 'Succeded', value: 'Succeded' }
 ]
 
 export const paymentMethod = [

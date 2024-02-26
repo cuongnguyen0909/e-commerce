@@ -7,3 +7,4 @@ export { default as CreateProduct } from './manage_product/CreateProduct';
 export { default as UpdateProduct } from './manage_product/UpdateProduct'
 export { default as ManageCategory } from './manage_category/ManageCategory'
 export { default as CustomVarriant } from './manage_product/CustomVarriant'
+export { default as PieComponent } from './dashboard/PieComponent'

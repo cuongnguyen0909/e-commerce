@@ -159,7 +159,7 @@ const login = asyncHandler(async (req, res) => {
 //GET A USER
 const getCurrentUser = asyncHandler(async (req, res) => {
     const { _id } = req.user;
-    const user = await User.findOne({ _id }).select('-refreshToken -password')
+    const user = await User.findOne({ _id }).select('-password')
         .populate({
             path: 'cart',
             populate: ({
@@ -479,7 +479,6 @@ const updateCart = asyncHandler(async (req, res) => {
             },
             { new: true, },
         );
-
         return res.json({
             status: response ? true : false,
             message: response ? 'Updated your cart successfully' : 'Can not update cart',
@@ -488,16 +487,13 @@ const updateCart = asyncHandler(async (req, res) => {
 
 });
 
-
-
 const removeProductInCart = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     const { pid, color } = req.params;
     const userCart = await User.findById(_id).select('cart');
     const product = await Product.findById(pid);
 
-
-    const alreadyProduct = userCart?.cart?.find((item) => item.product.toString() === pid && item.color === color);
+    const alreadyProduct = userCart?.cart?.find((item) => item?.product.toString() === pid && item?.color === color);
     if (!alreadyProduct) {
         return res.json({
             status: false,
@@ -507,11 +503,11 @@ const removeProductInCart = asyncHandler(async (req, res) => {
 
     product.varriants.map(async (item) => {
         if (item.color.toLowerCase() === color.toLowerCase()) {
-            item.sold = item.sold - Number(userCart?.cart?.find((itemCart) => itemCart.color.toLowerCase() === item?.color.toLowerCase())?.quantity);
-            item.quantity = item.initialQuantity - item.sold;
+            item.sold = item.sold - Number(userCart?.cart?.find((itemCart) => itemCart?.color.toLowerCase() === item?.color.toLowerCase())?.quantity);
+            item.quantity = item?.initialQuantity - item?.sold;
         } else {
-            product.sold = product?.sold - Number(userCart?.cart?.find((itemCart) => itemCart.color.toLowerCase() !== item?.color.toLowerCase())?.quantity);
-            product.quantity = product?.initialQuantity - product.sold;
+            product.sold = product?.sold - Number(userCart?.cart?.find((itemCart) => itemCart?.color.toLowerCase() !== item?.color.toLowerCase())?.quantity);
+            product.quantity = product?.initialQuantity - product?.sold;
         }
     })
     await product.save();
@@ -532,7 +528,7 @@ const removeProductInCart = asyncHandler(async (req, res) => {
 const updateWishlist = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     const { pid } = req.params;
-    const user = await User.findById(_id);
+    const user = await User.findById(_id).populate(('wishlist', 'title thumb price color'));
     const alreadyProduct = user.wishlist?.find((item) => item.toString() === pid);
     if (alreadyProduct) {
         const response = await User.findByIdAndUpdate(

@@ -19,13 +19,13 @@ const OrderDetail = ({ orderDetail, setOrderDetail, isAdmin }) => {
         try {
             const response = await apiUpdateStatusOrder(orderDetail?._id, data);
             if (response?.status) {
-                toast.success('Create category successfully');
+                toast.success('Update order successfully');
                 reset();
                 setOrderDetail(response?.order)
                 setEditStatus(false);
                 // Reset form và làm các công việc khác sau khi submit thành công
             } else {
-                toast.error('Create category failed');
+                toast.error('Update order failed');
             }
         } catch (error) {
             console.error('API error:', error.message);

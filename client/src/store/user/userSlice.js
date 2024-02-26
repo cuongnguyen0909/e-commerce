@@ -32,7 +32,7 @@ export const userSlice = createSlice({
             const { pid, color, quantity } = action.payload;
             const updateCart = JSON.parse(JSON.stringify((state.currentCart)));
             const completeCart = updateCart.map((item) => {
-                if (item.product._id === pid && item.color === color) {
+                if (item.product?._id === pid && item.color === color) {
                     return { ...item, quantity: quantity }
                 } else {
                     return item;
